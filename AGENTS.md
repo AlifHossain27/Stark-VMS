@@ -3,7 +3,7 @@
 Monorepo for a course project: fleet/vehicle management.
 
 ## Stack
-- `backend/`: Java 21, Spring Boot 3.x, Gradle, Spring Data JPA, Bean Validation. H2 for local dev, PostgreSQL in production (Render).
+- `backend/`: Java 21, Spring Boot 4.1.2, Gradle, Spring Data JPA, Bean Validation. H2 for local dev, PostgreSQL in production (Neon).
 - `frontend/`: Flutter Web (Dart). Deployed to Netlify.
 - Communication: REST/JSON. The contract lives in `docs/api-contract.md` and is the single source of truth.
 

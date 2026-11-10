@@ -9,7 +9,7 @@ Base path: `/api`. All bodies are JSON (`Content-Type: application/json`).
 | Field | Type | Rules |
 |---|---|---|
 | `id` | number | server-generated, read-only |
-| `vehicleNumber` | string | required, 3-20 chars, trimmed, stored UPPERCASE, **unique** (case-insensitive) |
+| `vehicleNumber` | string | required, 3-30 chars, trimmed, stored UPPERCASE, **unique** (case-insensitive) |
 | `brand` | string | required, max 50 |
 | `model` | string | required, max 50 |
 | `manufactureYear` | number | required, 1980 to current year + 1 |

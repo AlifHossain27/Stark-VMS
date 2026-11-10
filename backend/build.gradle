@@ -19,11 +19,28 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'org.postgresql:postgresql'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.named('bootRun') {
+	def envFile = file('.env').exists() ? file('.env') : (file('../.env').exists() ? file('../.env') : null)
+	if (envFile) {
+		envFile.readLines().each { line ->
+			line = line.trim()
+			if (line && !line.startsWith('#') && line.contains('=')) {
+				def parts = line.split('=', 2)
+				environment parts[0].trim(), parts[1].trim()
+			}
+		}
+	}
 }
