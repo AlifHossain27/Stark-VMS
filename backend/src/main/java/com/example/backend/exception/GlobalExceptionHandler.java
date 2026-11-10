@@ -4,14 +4,18 @@ import com.example.backend.dto.ErrorResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.exc.InvalidFormatException;
 
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -69,6 +73,43 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        Map<String, String> fieldErrors = new HashMap<>();
+        String message = "Malformed JSON request or invalid field format";
+
+        Throwable cause = ex.getCause();
+        if (cause instanceof InvalidFormatException ifx) {
+            String fieldName = ifx.getPath().stream()
+                    .map(JacksonException.Reference::getPropertyName)
+                    .filter(Objects::nonNull)
+                    .reduce((first, second) -> second)
+                    .orElse("request");
+            if (ifx.getTargetType() != null && ifx.getTargetType().isEnum()) {
+                fieldErrors.put(fieldName, "Invalid " + fieldName + " value: " + ifx.getValue());
+                message = "Invalid value for " + fieldName;
+            } else {
+                fieldErrors.put(fieldName, "Invalid format for " + fieldName);
+            }
+        } else if (cause instanceof JacksonException jx) {
+            String fieldName = jx.getPath().stream()
+                    .map(JacksonException.Reference::getPropertyName)
+                    .filter(Objects::nonNull)
+                    .reduce((first, second) -> second)
+                    .orElse("request");
+            fieldErrors.put(fieldName, "Invalid format or value");
+        }
+
+        ErrorResponse error = new ErrorResponse(
+                Instant.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                message,
+                fieldErrors.isEmpty() ? null : fieldErrors
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ErrorResponse> handleBadRequest(BadRequestException ex) {
         ErrorResponse error = new ErrorResponse(
@@ -93,4 +134,3 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 }
-

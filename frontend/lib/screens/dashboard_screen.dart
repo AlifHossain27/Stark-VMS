@@ -489,6 +489,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
       separatorBuilder: (context, index) => const Divider(height: 1, color: AppColors.border),
       itemBuilder: (context, index) {
         final vehicle = recent[index];
+        final Color statusColor;
+        switch (vehicle.status.toUpperCase()) {
+          case 'ACTIVE':
+            statusColor = AppColors.success;
+            break;
+          case 'MAINTENANCE':
+            statusColor = AppColors.amberAccent;
+            break;
+          case 'INACTIVE':
+          default:
+            statusColor = AppColors.textSecondary;
+            break;
+        }
+
         return ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
           leading: Container(
@@ -520,16 +534,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceSubtle,
+                  color: statusColor.withAlpha(20),
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: statusColor.withAlpha(60)),
                 ),
                 child: Text(
-                  vehicle.vehicleType,
-                  style: const TextStyle(
+                  vehicle.status.toUpperCase(),
+                  style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.textSecondary,
+                    color: statusColor,
                   ),
                 ),
               ),
@@ -552,34 +566,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ),
                 Text(
-                  'Year ${vehicle.manufactureYear}',
+                  vehicle.company,
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.textMuted,
                   ),
                 ),
-                if (vehicle.color != null && vehicle.color!.isNotEmpty)
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: const BoxDecoration(
-                          color: AppColors.textMuted,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        vehicle.color!,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textMuted,
-                        ),
-                      ),
-                    ],
-                  ),
               ],
             ),
           ),

@@ -26,8 +26,9 @@ class MockVehicleApiService extends VehicleApiService {
       vehicleNumber: vehicleData['vehicleNumber'] as String,
       brand: vehicleData['brand'] as String,
       model: vehicleData['model'] as String,
-      manufactureYear: vehicleData['manufactureYear'] as int,
-      vehicleType: vehicleData['vehicleType'] as String,
+      company: vehicleData['company'] as String? ?? 'Stark Logistics',
+      vehicleType: vehicleData['vehicleType'] as String? ?? 'CAR',
+      status: vehicleData['status'] as String? ?? 'ACTIVE',
     );
   }
 
@@ -41,8 +42,9 @@ class MockVehicleApiService extends VehicleApiService {
       vehicleNumber: vehicleData['vehicleNumber'] as String,
       brand: vehicleData['brand'] as String,
       model: vehicleData['model'] as String,
-      manufactureYear: vehicleData['manufactureYear'] as int,
-      vehicleType: vehicleData['vehicleType'] as String,
+      company: vehicleData['company'] as String? ?? 'Stark Logistics',
+      vehicleType: vehicleData['vehicleType'] as String? ?? 'CAR',
+      status: vehicleData['status'] as String? ?? 'ACTIVE',
     );
   }
 
@@ -79,7 +81,7 @@ void main() {
       expect(find.text('Vehicle number is required'), findsOneWidget);
       expect(find.text('Brand is required'), findsOneWidget);
       expect(find.text('Model is required'), findsOneWidget);
-      expect(find.text('Manufacture year is required'), findsOneWidget);
+      expect(find.text('Company is required'), findsOneWidget);
     });
 
     testWidgets('pre-populates fields in Edit mode', (tester) async {
@@ -88,9 +90,9 @@ void main() {
         vehicleNumber: 'DHAKA-METRO-GA-11-2233',
         brand: 'Toyota',
         model: 'Hiace',
-        manufactureYear: 2019,
+        company: 'Stark Logistics',
         vehicleType: 'VAN',
-        color: 'White',
+        status: 'ACTIVE',
       );
 
       await tester.pumpWidget(createFormTestWidget(vehicle: existing));
@@ -100,7 +102,7 @@ void main() {
       expect(find.text('DHAKA-METRO-GA-11-2233'), findsOneWidget);
       expect(find.text('Toyota'), findsOneWidget);
       expect(find.text('Hiace'), findsOneWidget);
-      expect(find.text('2019'), findsOneWidget);
+      expect(find.text('Stark Logistics'), findsOneWidget);
       expect(find.text('Update Vehicle'), findsOneWidget);
     });
 
@@ -118,11 +120,11 @@ void main() {
       await tester.pumpWidget(createFormTestWidget(apiService: mockService));
       await tester.pumpAndSettle();
 
-      // Enter valid form fields
+      // Enter valid form fields: 0=number, 1=brand, 2=model, 3=company
       await tester.enterText(find.byType(TextFormField).at(0), 'DHAKA-METRO-GA-11-2233');
       await tester.enterText(find.byType(TextFormField).at(1), 'Toyota');
       await tester.enterText(find.byType(TextFormField).at(2), 'Hiace');
-      await tester.enterText(find.byType(TextFormField).at(3), '2020');
+      await tester.enterText(find.byType(TextFormField).at(3), 'Stark Logistics');
 
       // Submit
       final submitButton = find.text('Register Vehicle');

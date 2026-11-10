@@ -65,7 +65,7 @@ class DeleteConfirmationDialog extends StatelessWidget {
                           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                         ),
                         Text(
-                          '${vehicle.brand} ${vehicle.model} (${vehicle.manufactureYear})',
+                          '${vehicle.brand} ${vehicle.model} • ${vehicle.company}',
                           style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
                         ),
                       ],

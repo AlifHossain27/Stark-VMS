@@ -1,6 +1,9 @@
 package com.example.backend.dto;
 
 import com.example.backend.entity.Vehicle;
+import com.example.backend.entity.VehicleStatus;
+import com.example.backend.entity.VehicleType;
+
 import java.time.Instant;
 
 public record VehicleResponse(
@@ -8,9 +11,9 @@ public record VehicleResponse(
         String vehicleNumber,
         String brand,
         String model,
-        Integer manufactureYear,
-        String vehicleType,
-        String color,
+        String company,
+        VehicleType vehicleType,
+        VehicleStatus status,
         Instant createdAt,
         Instant updatedAt
 ) {
@@ -20,12 +23,11 @@ public record VehicleResponse(
                 vehicle.getVehicleNumber(),
                 vehicle.getBrand(),
                 vehicle.getModel(),
-                vehicle.getManufactureYear(),
+                vehicle.getCompany(),
                 vehicle.getVehicleType(),
-                vehicle.getColor(),
+                vehicle.getStatus(),
                 vehicle.getCreatedAt(),
                 vehicle.getUpdatedAt()
         );
     }
 }
-

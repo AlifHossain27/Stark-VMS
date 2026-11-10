@@ -1,11 +1,26 @@
 class Vehicle {
+  static const List<String> vehicleTypes = [
+    'CAR',
+    'VAN',
+    'TRUCK',
+    'BUS',
+    'MOTORCYCLE',
+    'OTHER',
+  ];
+
+  static const List<String> statusValues = [
+    'ACTIVE',
+    'INACTIVE',
+    'MAINTENANCE',
+  ];
+
   final int id;
   final String vehicleNumber;
   final String brand;
   final String model;
-  final int manufactureYear;
+  final String company;
   final String vehicleType;
-  final String? color;
+  final String status;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -14,9 +29,9 @@ class Vehicle {
     required this.vehicleNumber,
     required this.brand,
     required this.model,
-    required this.manufactureYear,
+    required this.company,
     required this.vehicleType,
-    this.color,
+    this.status = 'ACTIVE',
     this.createdAt,
     this.updatedAt,
   });
@@ -27,9 +42,9 @@ class Vehicle {
       vehicleNumber: json['vehicleNumber'] as String,
       brand: json['brand'] as String,
       model: json['model'] as String,
-      manufactureYear: json['manufactureYear'] as int,
-      vehicleType: json['vehicleType'] as String,
-      color: json['color'] as String?,
+      company: json['company'] as String? ?? '',
+      vehicleType: json['vehicleType'] as String? ?? 'OTHER',
+      status: json['status'] as String? ?? 'ACTIVE',
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'] as String)
           : null,
@@ -45,9 +60,9 @@ class Vehicle {
       'vehicleNumber': vehicleNumber,
       'brand': brand,
       'model': model,
-      'manufactureYear': manufactureYear,
+      'company': company,
       'vehicleType': vehicleType,
-      if (color != null) 'color': color,
+      'status': status,
       if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
       if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),
     };
@@ -56,12 +71,12 @@ class Vehicle {
   /// Request body for POST and PUT (excludes read-only fields id, createdAt, updatedAt)
   Map<String, dynamic> toRequestBody() {
     return {
-      'vehicleNumber': vehicleNumber,
-      'brand': brand,
-      'model': model,
-      'manufactureYear': manufactureYear,
+      'vehicleNumber': vehicleNumber.trim().toUpperCase(),
+      'brand': brand.trim(),
+      'model': model.trim(),
+      'company': company.trim(),
       'vehicleType': vehicleType,
-      if (color != null && color!.trim().isNotEmpty) 'color': color!.trim(),
+      'status': status,
     };
   }
 
@@ -70,9 +85,9 @@ class Vehicle {
     String? vehicleNumber,
     String? brand,
     String? model,
-    int? manufactureYear,
+    String? company,
     String? vehicleType,
-    String? color,
+    String? status,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -81,9 +96,9 @@ class Vehicle {
       vehicleNumber: vehicleNumber ?? this.vehicleNumber,
       brand: brand ?? this.brand,
       model: model ?? this.model,
-      manufactureYear: manufactureYear ?? this.manufactureYear,
+      company: company ?? this.company,
       vehicleType: vehicleType ?? this.vehicleType,
-      color: color ?? this.color,
+      status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

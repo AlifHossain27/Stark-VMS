@@ -28,10 +28,10 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
   late final TextEditingController _vehicleNumberController;
   late final TextEditingController _brandController;
   late final TextEditingController _modelController;
-  late final TextEditingController _yearController;
-  late final TextEditingController _colorController;
+  late final TextEditingController _companyController;
 
   String? _selectedVehicleType;
+  String? _selectedStatus;
   bool _isSubmitting = false;
   Map<String, String> _serverFieldErrors = {};
 
@@ -41,8 +41,13 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
     'TRUCK',
     'BUS',
     'MOTORCYCLE',
-    'SUV',
-    'PICKUP',
+    'OTHER',
+  ];
+
+  static const List<String> _statusValues = [
+    'ACTIVE',
+    'INACTIVE',
+    'MAINTENANCE',
   ];
 
   bool get isEditMode => widget.vehicle != null;
@@ -54,20 +59,17 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
     _vehicleNumberController = TextEditingController(text: v?.vehicleNumber ?? '');
     _brandController = TextEditingController(text: v?.brand ?? '');
     _modelController = TextEditingController(text: v?.model ?? '');
-    _yearController = TextEditingController(
-      text: v != null ? v.manufactureYear.toString() : '',
-    );
-    _colorController = TextEditingController(text: v?.color ?? '');
+    _companyController = TextEditingController(text: v?.company ?? '');
 
     if (v != null) {
       final upperType = v.vehicleType.toUpperCase();
-      if (_vehicleTypes.contains(upperType)) {
-        _selectedVehicleType = upperType;
-      } else {
-        _selectedVehicleType = v.vehicleType;
-      }
+      _selectedVehicleType = _vehicleTypes.contains(upperType) ? upperType : 'OTHER';
+
+      final upperStatus = v.status.toUpperCase();
+      _selectedStatus = _statusValues.contains(upperStatus) ? upperStatus : 'ACTIVE';
     } else {
       _selectedVehicleType = 'CAR';
+      _selectedStatus = 'ACTIVE';
     }
   }
 
@@ -76,8 +78,7 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
     _vehicleNumberController.dispose();
     _brandController.dispose();
     _modelController.dispose();
-    _yearController.dispose();
-    _colorController.dispose();
+    _companyController.dispose();
     super.dispose();
   }
 
@@ -98,10 +99,9 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
       'vehicleNumber': _vehicleNumberController.text.trim().toUpperCase(),
       'brand': _brandController.text.trim(),
       'model': _modelController.text.trim(),
-      'manufactureYear': int.parse(_yearController.text.trim()),
+      'company': _companyController.text.trim(),
       'vehicleType': _selectedVehicleType ?? 'CAR',
-      if (_colorController.text.trim().isNotEmpty)
-        'color': _colorController.text.trim(),
+      'status': _selectedStatus ?? 'ACTIVE',
     };
 
     final provider = context.read<VehicleProvider>();
@@ -264,7 +264,7 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
                         decoration: InputDecoration(
                           hintText: 'e.g. DHAKA-METRO-GA-11-2233',
                           prefixIcon: const Icon(Icons.pin_outlined, size: 18),
-                          helperText: 'Unique identifier, uppercase only',
+                          helperText: 'Unique identifier, 3-20 characters',
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                         validator: (val) {
@@ -289,7 +289,7 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _buildLabel('Brand / Make *'),
+                                _buildLabel('Brand *'),
                                 TextFormField(
                                   controller: _brandController,
                                   decoration: InputDecoration(
@@ -302,6 +302,9 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
                                     if (serverErr != null) return serverErr;
                                     if (val == null || val.trim().isEmpty) {
                                       return 'Brand is required';
+                                    }
+                                    if (val.trim().length > 50) {
+                                      return 'Brand cannot exceed 50 characters';
                                     }
                                     return null;
                                   },
@@ -328,6 +331,9 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
                                     if (val == null || val.trim().isEmpty) {
                                       return 'Model is required';
                                     }
+                                    if (val.trim().length > 50) {
+                                      return 'Model cannot exceed 50 characters';
+                                    }
                                     return null;
                                   },
                                 ),
@@ -338,41 +344,33 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
                       ),
                       const SizedBox(height: 18),
 
-                      // 3. Manufacture Year & Vehicle Type (2 Columns)
+                      // 3. Company Field
+                      _buildLabel('Company / Operating Entity *'),
+                      TextFormField(
+                        controller: _companyController,
+                        decoration: InputDecoration(
+                          hintText: 'e.g. Stark Logistics, Stark Transit',
+                          prefixIcon: const Icon(Icons.corporate_fare_outlined, size: 18),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                        validator: (val) {
+                          final serverErr = _serverFieldErrors['company'];
+                          if (serverErr != null) return serverErr;
+                          if (val == null || val.trim().isEmpty) {
+                            return 'Company is required';
+                          }
+                          if (val.trim().length > 100) {
+                            return 'Company cannot exceed 100 characters';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 18),
+
+                      // 4. Vehicle Type & Status Row (2 Columns)
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildLabel('Manufacture Year *'),
-                                TextFormField(
-                                  controller: _yearController,
-                                  keyboardType: TextInputType.number,
-                                  decoration: InputDecoration(
-                                    hintText: 'e.g. 2023',
-                                    prefixIcon: const Icon(Icons.calendar_today_outlined, size: 18),
-                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                                  ),
-                                  validator: (val) {
-                                    final serverErr = _serverFieldErrors['manufactureYear'];
-                                    if (serverErr != null) return serverErr;
-                                    if (val == null || val.trim().isEmpty) {
-                                      return 'Year is required';
-                                    }
-                                    final y = int.tryParse(val.trim());
-                                    final currentYear = DateTime.now().year + 1;
-                                    if (y == null || y < 1900 || y > currentYear) {
-                                      return 'Enter valid year (1900-$currentYear)';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 14),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -407,27 +405,42 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
                               ],
                             ),
                           ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildLabel('Status *'),
+                                DropdownButtonFormField<String>(
+                                  initialValue: _selectedStatus,
+                                  decoration: InputDecoration(
+                                    prefixIcon: const Icon(Icons.toggle_on_outlined, size: 18),
+                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                                  ),
+                                  items: _statusValues.map((status) {
+                                    return DropdownMenuItem(
+                                      value: status,
+                                      child: Text(status, style: const TextStyle(fontSize: 14)),
+                                    );
+                                  }).toList(),
+                                  onChanged: (val) {
+                                    setState(() {
+                                      _selectedStatus = val;
+                                    });
+                                  },
+                                  validator: (val) {
+                                    final serverErr = _serverFieldErrors['status'];
+                                    if (serverErr != null) return serverErr;
+                                    if (val == null || val.isEmpty) {
+                                      return 'Select status';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
-                      ),
-                      const SizedBox(height: 18),
-
-                      // 4. Color (Optional)
-                      _buildLabel('Vehicle Exterior Color (Optional)'),
-                      TextFormField(
-                        controller: _colorController,
-                        decoration: InputDecoration(
-                          hintText: 'e.g. Metallic Black, Alpine White',
-                          prefixIcon: const Icon(Icons.palette_outlined, size: 18),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                        ),
-                        validator: (val) {
-                          final serverErr = _serverFieldErrors['color'];
-                          if (serverErr != null) return serverErr;
-                          if (val != null && val.trim().length > 30) {
-                            return 'Color cannot exceed 30 characters';
-                          }
-                          return null;
-                        },
                       ),
                     ],
                   ),

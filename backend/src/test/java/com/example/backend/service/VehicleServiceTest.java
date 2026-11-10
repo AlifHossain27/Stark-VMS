@@ -3,20 +3,19 @@ package com.example.backend.service;
 import com.example.backend.dto.VehicleRequest;
 import com.example.backend.dto.VehicleResponse;
 import com.example.backend.entity.Vehicle;
-import com.example.backend.exception.BadRequestException;
+import com.example.backend.entity.VehicleStatus;
+import com.example.backend.entity.VehicleType;
 import com.example.backend.exception.DuplicateResourceException;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.repository.VehicleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
-import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +37,7 @@ class VehicleServiceTest {
 
     @BeforeEach
     void setUp() {
-        vehicle = new Vehicle("DHAKA-METRO-GA-11-2233", "Toyota", "Hiace", 2019, "VAN", "White");
+        vehicle = new Vehicle("DHAKA-METRO-GA-11-2233", "Toyota", "Hiace", "Stark Logistics", VehicleType.VAN, VehicleStatus.ACTIVE);
         vehicle.setId(1L);
         vehicle.setCreatedAt(Instant.now());
         vehicle.setUpdatedAt(Instant.now());
@@ -54,6 +53,9 @@ class VehicleServiceTest {
         VehicleResponse first = result.get(0);
         assertThat(first.id()).isEqualTo(1L);
         assertThat(first.vehicleNumber()).isEqualTo("DHAKA-METRO-GA-11-2233");
+        assertThat(first.company()).isEqualTo("Stark Logistics");
+        assertThat(first.vehicleType()).isEqualTo(VehicleType.VAN);
+        assertThat(first.status()).isEqualTo(VehicleStatus.ACTIVE);
     }
 
     @Test
@@ -73,6 +75,7 @@ class VehicleServiceTest {
 
         assertThat(response.id()).isEqualTo(1L);
         assertThat(response.brand()).isEqualTo("Toyota");
+        assertThat(response.company()).isEqualTo("Stark Logistics");
     }
 
     @Test
@@ -85,14 +88,14 @@ class VehicleServiceTest {
     }
 
     @Test
-    void createVehicle_success() {
+    void createVehicle_success_withExplicitStatus() {
         VehicleRequest request = new VehicleRequest(
                 "dhaka-metro-ga-11-2233",
                 "Toyota",
                 "Hiace",
-                2019,
-                "van",
-                "White"
+                "Stark Logistics",
+                VehicleType.VAN,
+                VehicleStatus.MAINTENANCE
         );
 
         when(vehicleRepository.existsByVehicleNumberIgnoreCase("DHAKA-METRO-GA-11-2233")).thenReturn(false);
@@ -108,6 +111,34 @@ class VehicleServiceTest {
 
         assertThat(response.id()).isEqualTo(1L);
         assertThat(response.vehicleNumber()).isEqualTo("DHAKA-METRO-GA-11-2233");
+        assertThat(response.status()).isEqualTo(VehicleStatus.MAINTENANCE);
+        assertThat(response.company()).isEqualTo("Stark Logistics");
+    }
+
+    @Test
+    void createVehicle_success_withDefaultStatus() {
+        VehicleRequest request = new VehicleRequest(
+                "dhaka-metro-ga-11-2233",
+                "Toyota",
+                "Hiace",
+                "Stark Logistics",
+                VehicleType.VAN,
+                null
+        );
+
+        when(vehicleRepository.existsByVehicleNumberIgnoreCase("DHAKA-METRO-GA-11-2233")).thenReturn(false);
+        when(vehicleRepository.save(any(Vehicle.class))).thenAnswer(invocation -> {
+            Vehicle v = invocation.getArgument(0);
+            v.setId(1L);
+            v.setCreatedAt(Instant.now());
+            v.setUpdatedAt(Instant.now());
+            return v;
+        });
+
+        VehicleResponse response = vehicleService.createVehicle(request);
+
+        assertThat(response.id()).isEqualTo(1L);
+        assertThat(response.status()).isEqualTo(VehicleStatus.ACTIVE);
     }
 
     @Test
@@ -116,9 +147,9 @@ class VehicleServiceTest {
                 "DHAKA-METRO-GA-11-2233",
                 "Toyota",
                 "Hiace",
-                2019,
-                "VAN",
-                "White"
+                "Stark Logistics",
+                VehicleType.VAN,
+                VehicleStatus.ACTIVE
         );
 
         when(vehicleRepository.existsByVehicleNumberIgnoreCase("DHAKA-METRO-GA-11-2233")).thenReturn(true);
@@ -134,9 +165,9 @@ class VehicleServiceTest {
                 "DHAKA-METRO-GA-11-2233",
                 "Toyota Updated",
                 "Hiace Deluxe",
-                2020,
-                "VAN",
-                "Black"
+                "Stark Corp",
+                VehicleType.VAN,
+                VehicleStatus.INACTIVE
         );
 
         when(vehicleRepository.findById(1L)).thenReturn(Optional.of(vehicle));
@@ -147,7 +178,8 @@ class VehicleServiceTest {
 
         assertThat(response.brand()).isEqualTo("Toyota Updated");
         assertThat(response.model()).isEqualTo("Hiace Deluxe");
-        assertThat(response.color()).isEqualTo("Black");
+        assertThat(response.company()).isEqualTo("Stark Corp");
+        assertThat(response.status()).isEqualTo(VehicleStatus.INACTIVE);
     }
 
     @Test
@@ -156,9 +188,9 @@ class VehicleServiceTest {
                 "DHAKA-METRO-BA-99-9999",
                 "Toyota",
                 "Hiace",
-                2020,
-                "VAN",
-                null
+                "Stark Corp",
+                VehicleType.VAN,
+                VehicleStatus.ACTIVE
         );
 
         when(vehicleRepository.findById(1L)).thenReturn(Optional.of(vehicle));

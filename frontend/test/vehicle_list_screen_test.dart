@@ -66,15 +66,19 @@ void main() {
   });
 
   testWidgets('displays vehicle data with edit and delete action buttons', (tester) async {
+    tester.view.physicalSize = const Size(1280, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
     final vehicles = [
       const Vehicle(
         id: 1,
         vehicleNumber: 'DHAKA-METRO-GA-11-2233',
         brand: 'Toyota',
         model: 'Hiace',
-        manufactureYear: 2019,
+        company: 'Stark Logistics',
         vehicleType: 'VAN',
-        color: 'White',
+        status: 'ACTIVE',
       ),
     ];
 
@@ -83,8 +87,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('DHAKA-METRO-GA-11-2233'), findsOneWidget);
-    expect(find.text('Toyota Hiace'), findsOneWidget);
+    expect(find.text('Toyota'), findsOneWidget);
+    expect(find.text('Hiace'), findsOneWidget);
+    expect(find.text('Stark Logistics'), findsOneWidget);
     expect(find.text('VAN'), findsOneWidget);
+    expect(find.text('ACTIVE'), findsOneWidget);
     expect(find.byIcon(Icons.edit_outlined), findsOneWidget);
     expect(find.byIcon(Icons.delete_outline_rounded), findsOneWidget);
   });

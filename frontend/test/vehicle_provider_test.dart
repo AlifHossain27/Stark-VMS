@@ -32,8 +32,9 @@ class FakeVehicleApiService extends VehicleApiService {
       vehicleNumber: vehicleData['vehicleNumber'] as String,
       brand: vehicleData['brand'] as String,
       model: vehicleData['model'] as String,
-      manufactureYear: vehicleData['manufactureYear'] as int,
+      company: vehicleData['company'] as String? ?? 'Stark Logistics',
       vehicleType: vehicleData['vehicleType'] as String,
+      status: vehicleData['status'] as String? ?? 'ACTIVE',
     );
     storage.add(vehicle);
     return vehicle;
@@ -50,8 +51,9 @@ class FakeVehicleApiService extends VehicleApiService {
       vehicleNumber: vehicleData['vehicleNumber'] as String? ?? storage[index].vehicleNumber,
       brand: vehicleData['brand'] as String? ?? storage[index].brand,
       model: vehicleData['model'] as String? ?? storage[index].model,
-      manufactureYear: vehicleData['manufactureYear'] as int? ?? storage[index].manufactureYear,
+      company: vehicleData['company'] as String? ?? storage[index].company,
       vehicleType: vehicleData['vehicleType'] as String? ?? storage[index].vehicleType,
+      status: vehicleData['status'] as String? ?? storage[index].status,
     );
     storage[index] = updated;
     return updated;
@@ -81,8 +83,9 @@ void main() {
           vehicleNumber: 'DHAKA-METRO-GA-11-2233',
           brand: 'Toyota',
           model: 'Hiace',
-          manufactureYear: 2019,
+          company: 'Stark Logistics',
           vehicleType: 'VAN',
+          status: 'ACTIVE',
         ),
       ];
 
@@ -114,8 +117,9 @@ void main() {
         'vehicleNumber': 'DHAKA-METRO-BA-12-3456',
         'brand': 'Hino',
         'model': '1J',
-        'manufactureYear': 2021,
+        'company': 'Stark Transit',
         'vehicleType': 'BUS',
+        'status': 'ACTIVE',
       });
 
       expect(provider.vehicles.length, 1);
@@ -130,8 +134,9 @@ void main() {
           vehicleNumber: 'DHAKA-METRO-GA-11-2233',
           brand: 'Toyota',
           model: 'Hiace',
-          manufactureYear: 2019,
+          company: 'Stark Logistics',
           vehicleType: 'VAN',
+          status: 'ACTIVE',
         ),
       ];
 
@@ -150,8 +155,9 @@ void main() {
           vehicleNumber: 'DHAKA-METRO-GA-11-2233',
           brand: 'Toyota',
           model: 'Hiace',
-          manufactureYear: 2019,
+          company: 'Stark Logistics',
           vehicleType: 'VAN',
+          status: 'ACTIVE',
         ),
       ];
 
@@ -162,4 +168,3 @@ void main() {
     });
   });
 }
-

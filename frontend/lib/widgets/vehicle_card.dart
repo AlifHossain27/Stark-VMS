@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/vehicle.dart';
+import '../theme/app_colors.dart';
 
 class VehicleCard extends StatelessWidget {
   final Vehicle vehicle;
@@ -16,31 +17,80 @@ class VehicleCard extends StatelessWidget {
   Color _typeColor(String type) {
     switch (type.toUpperCase()) {
       case 'CAR':
-        return Colors.blue.shade700;
+        return const Color(0xFF2563EB);
       case 'VAN':
-        return Colors.teal.shade700;
+        return const Color(0xFF0D9488);
       case 'TRUCK':
-        return Colors.deepOrange.shade700;
+        return const Color(0xFFD97706);
       case 'BUS':
-        return Colors.indigo.shade700;
+        return const Color(0xFF4F46E5);
       case 'MOTORCYCLE':
-        return Colors.purple.shade700;
+        return const Color(0xFF9333EA);
+      case 'OTHER':
       default:
-        return Colors.blueGrey.shade700;
+        return AppColors.textSecondary;
     }
+  }
+
+  Widget _buildStatusBadge(String status) {
+    final Color color;
+    final String label = status.toUpperCase();
+    switch (label) {
+      case 'ACTIVE':
+        color = AppColors.success;
+        break;
+      case 'MAINTENANCE':
+        color = AppColors.amberAccent;
+        break;
+      case 'INACTIVE':
+      default:
+        color = AppColors.textSecondary;
+        break;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withAlpha(20),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withAlpha(60)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final badgeColor = _typeColor(vehicle.vehicleType);
+    final typeBadgeColor = _typeColor(vehicle.vehicleType);
 
     return Card(
       elevation: 0,
       margin: const EdgeInsets.symmetric(vertical: 6),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey.shade200, width: 1.2),
+        side: const BorderSide(color: AppColors.border, width: 1.2),
       ),
       color: Colors.white,
       child: Padding(
@@ -55,22 +105,23 @@ class VehicleCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
+                    color: AppColors.surfaceSubtle,
                     borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: Colors.grey.shade300),
+                    border: Border.all(color: AppColors.border),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.tag, size: 14, color: Colors.black54),
+                      const Icon(Icons.pin_outlined, size: 14, color: AppColors.textSecondary),
                       const SizedBox(width: 4),
                       Text(
                         vehicle.vehicleNumber,
                         style: const TextStyle(
+                          fontFamily: 'monospace',
                           fontWeight: FontWeight.w700,
                           fontSize: 13,
                           letterSpacing: 0.6,
-                          color: Colors.black87,
+                          color: AppColors.textPrimary,
                         ),
                       ),
                     ],
@@ -81,7 +132,7 @@ class VehicleCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: badgeColor.withAlpha(25),
+                    color: typeBadgeColor.withAlpha(20),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
@@ -89,23 +140,26 @@ class VehicleCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      color: badgeColor,
+                      color: typeBadgeColor,
                     ),
                   ),
                 ),
+                const SizedBox(width: 8),
+                // Status Badge
+                _buildStatusBadge(vehicle.status),
                 const Spacer(),
                 // Action Buttons (Edit and Delete)
                 IconButton(
                   icon: const Icon(Icons.edit_outlined, size: 18),
                   tooltip: 'Edit Vehicle',
-                  color: Colors.blueGrey.shade700,
+                  color: AppColors.accent,
                   onPressed: onEdit,
                   visualDensity: VisualDensity.compact,
                 ),
                 IconButton(
                   icon: const Icon(Icons.delete_outline, size: 18),
                   tooltip: 'Delete Vehicle',
-                  color: Colors.red.shade600,
+                  color: AppColors.error,
                   onPressed: onDelete,
                   visualDensity: VisualDensity.compact,
                 ),
@@ -118,38 +172,20 @@ class VehicleCard extends StatelessWidget {
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 fontSize: 17,
-                color: const Color(0xFF0F172A),
+                color: AppColors.textPrimary,
               ),
             ),
-            const SizedBox(height: 8),
-            // Year & Color metadata
-            Wrap(
-              spacing: 16,
-              runSpacing: 6,
+            const SizedBox(height: 6),
+            // Company
+            Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.calendar_today_outlined, size: 14, color: Colors.grey.shade600),
-                    const SizedBox(width: 5),
-                    Text(
-                      'Year: ${vehicle.manufactureYear}',
-                      style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
-                    ),
-                  ],
+                const Icon(Icons.corporate_fare_outlined, size: 14, color: AppColors.textSecondary),
+                const SizedBox(width: 6),
+                Text(
+                  vehicle.company,
+                  style: const TextStyle(fontSize: 13, color: AppColors.textSecondary, fontWeight: FontWeight.w500),
                 ),
-                if (vehicle.color != null && vehicle.color!.isNotEmpty)
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.palette_outlined, size: 14, color: Colors.grey.shade600),
-                      const SizedBox(width: 5),
-                      Text(
-                        'Color: ${vehicle.color}',
-                        style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
-                      ),
-                    ],
-                  ),
               ],
             ),
           ],

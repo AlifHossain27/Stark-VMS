@@ -3,14 +3,13 @@ package com.example.backend.service;
 import com.example.backend.dto.VehicleRequest;
 import com.example.backend.dto.VehicleResponse;
 import com.example.backend.entity.Vehicle;
-import com.example.backend.exception.BadRequestException;
+import com.example.backend.entity.VehicleStatus;
 import com.example.backend.exception.DuplicateResourceException;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Year;
 import java.util.List;
 import java.util.Map;
 
@@ -48,19 +47,15 @@ public class VehicleService {
             );
         }
 
-        validateManufactureYear(request.manufactureYear());
-
-        String color = (request.color() != null && !request.color().trim().isEmpty())
-                ? request.color().trim()
-                : null;
+        VehicleStatus status = request.status() != null ? request.status() : VehicleStatus.ACTIVE;
 
         Vehicle vehicle = new Vehicle(
                 normalizedNumber,
                 request.brand().trim(),
                 request.model().trim(),
-                request.manufactureYear(),
-                request.vehicleType().trim().toUpperCase(),
-                color
+                request.company().trim(),
+                request.vehicleType(),
+                status
         );
 
         Vehicle saved = vehicleRepository.save(vehicle);
@@ -74,7 +69,6 @@ public class VehicleService {
 
         String normalizedNumber = request.vehicleNumber().trim().toUpperCase();
 
-        // Check if number is used by another vehicle
         if (vehicleRepository.existsByVehicleNumberIgnoreCaseAndIdNot(normalizedNumber, id)) {
             throw new DuplicateResourceException(
                     "Vehicle number " + normalizedNumber + " is already used by another vehicle",
@@ -82,18 +76,14 @@ public class VehicleService {
             );
         }
 
-        validateManufactureYear(request.manufactureYear());
-
-        String color = (request.color() != null && !request.color().trim().isEmpty())
-                ? request.color().trim()
-                : null;
+        VehicleStatus status = request.status() != null ? request.status() : (vehicle.getStatus() != null ? vehicle.getStatus() : VehicleStatus.ACTIVE);
 
         vehicle.setVehicleNumber(normalizedNumber);
         vehicle.setBrand(request.brand().trim());
         vehicle.setModel(request.model().trim());
-        vehicle.setManufactureYear(request.manufactureYear());
-        vehicle.setVehicleType(request.vehicleType().trim().toUpperCase());
-        vehicle.setColor(color);
+        vehicle.setCompany(request.company().trim());
+        vehicle.setVehicleType(request.vehicleType());
+        vehicle.setStatus(status);
 
         Vehicle updated = vehicleRepository.save(vehicle);
         return VehicleResponse.fromEntity(updated);
@@ -105,15 +95,5 @@ public class VehicleService {
             throw new ResourceNotFoundException("Vehicle not found with id " + id);
         }
         vehicleRepository.deleteById(id);
-    }
-
-    private void validateManufactureYear(Integer year) {
-        int maxAllowedYear = Year.now().getValue() + 1;
-        if (year != null && year > maxAllowedYear) {
-            throw new BadRequestException(
-                    "Manufacture year cannot exceed " + maxAllowedYear,
-                    Map.of("manufactureYear", "cannot exceed " + maxAllowedYear)
-            );
-        }
     }
 }

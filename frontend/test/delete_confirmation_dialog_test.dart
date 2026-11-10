@@ -9,9 +9,9 @@ void main() {
     vehicleNumber: 'DHAKA-METRO-GA-11-2233',
     brand: 'Toyota',
     model: 'Hiace',
-    manufactureYear: 2019,
+    company: 'Stark Logistics',
     vehicleType: 'VAN',
-    color: 'White',
+    status: 'ACTIVE',
   );
 
   testWidgets('DeleteConfirmationDialog shows vehicle info and cancels on Cancel tap', (tester) async {
@@ -40,7 +40,7 @@ void main() {
 
     expect(find.text('Delete Vehicle?'), findsOneWidget);
     expect(find.text('DHAKA-METRO-GA-11-2233'), findsOneWidget);
-    expect(find.text('Toyota Hiace (2019)'), findsOneWidget);
+    expect(find.text('Toyota Hiace • Stark Logistics'), findsOneWidget);
 
     // Cancel
     await tester.tap(find.text('Cancel'));
@@ -82,4 +82,3 @@ void main() {
     expect(find.text('Delete Vehicle?'), findsNothing);
   });
 }
-

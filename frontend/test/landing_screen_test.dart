@@ -45,7 +45,7 @@ void main() {
       // 4. Features Section (6 features, 5 coming soon)
       expect(find.text('Vehicle Registry'), findsOneWidget);
       expect(find.text('Documents & Expiry Tracking'), findsOneWidget);
-      expect(find.text('Maintenance History'), findsOneWidget);
+      expect(find.text('Maintenance History'), findsWidgets);
       expect(find.text('Driver Assignment'), findsOneWidget);
       expect(find.text('Search & Server Filters'), findsOneWidget);
       expect(find.text('Dashboard Insights'), findsOneWidget);

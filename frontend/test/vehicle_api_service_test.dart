@@ -18,8 +18,9 @@ void main() {
               'vehicleNumber': 'DHAKA-METRO-GA-11-2233',
               'brand': 'Toyota',
               'model': 'Hiace',
-              'manufactureYear': 2019,
+              'company': 'Stark Logistics',
               'vehicleType': 'VAN',
+              'status': 'ACTIVE',
             }
           ]),
           200,
@@ -32,6 +33,7 @@ void main() {
 
       expect(vehicles.length, 1);
       expect(vehicles.first.vehicleNumber, 'DHAKA-METRO-GA-11-2233');
+      expect(vehicles.first.company, 'Stark Logistics');
     });
 
     test('getById returns single vehicle on 200', () async {
@@ -43,8 +45,9 @@ void main() {
             'vehicleNumber': 'DHAKA-METRO-GA-11-2233',
             'brand': 'Toyota',
             'model': 'Hiace',
-            'manufactureYear': 2019,
+            'company': 'Stark Logistics',
             'vehicleType': 'VAN',
+            'status': 'ACTIVE',
           }),
           200,
         );
@@ -55,6 +58,7 @@ void main() {
 
       expect(vehicle.id, 1);
       expect(vehicle.brand, 'Toyota');
+      expect(vehicle.company, 'Stark Logistics');
     });
 
     test('create returns created vehicle on 201', () async {
@@ -67,8 +71,9 @@ void main() {
             'vehicleNumber': 'DHAKA-METRO-BA-99-8877',
             'brand': 'Honda',
             'model': 'Civic',
-            'manufactureYear': 2022,
+            'company': 'Stark Transit',
             'vehicleType': 'CAR',
+            'status': 'ACTIVE',
           }),
           201,
         );
@@ -79,12 +84,14 @@ void main() {
         'vehicleNumber': 'DHAKA-METRO-BA-99-8877',
         'brand': 'Honda',
         'model': 'Civic',
-        'manufactureYear': 2022,
+        'company': 'Stark Transit',
         'vehicleType': 'CAR',
+        'status': 'ACTIVE',
       });
 
       expect(vehicle.id, 99);
       expect(vehicle.vehicleNumber, 'DHAKA-METRO-BA-99-8877');
+      expect(vehicle.company, 'Stark Transit');
     });
 
     test('create throws ApiException with fieldErrors on 409 conflict', () async {
@@ -121,8 +128,9 @@ void main() {
             'vehicleNumber': 'DHAKA-METRO-GA-11-2233',
             'brand': 'Toyota',
             'model': 'Hiace Updated',
-            'manufactureYear': 2020,
+            'company': 'Stark Logistics',
             'vehicleType': 'VAN',
+            'status': 'MAINTENANCE',
           }),
           200,
         );
@@ -132,6 +140,7 @@ void main() {
       final updated = await service.update(1, {'model': 'Hiace Updated'});
 
       expect(updated.model, 'Hiace Updated');
+      expect(updated.status, 'MAINTENANCE');
     });
 
     test('delete returns without error on 204', () async {
@@ -165,4 +174,3 @@ void main() {
     });
   });
 }
-

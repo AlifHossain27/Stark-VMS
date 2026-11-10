@@ -2,6 +2,8 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.VehicleRequest;
 import com.example.backend.dto.VehicleResponse;
+import com.example.backend.entity.VehicleStatus;
+import com.example.backend.entity.VehicleType;
 import com.example.backend.exception.DuplicateResourceException;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.service.VehicleService;
@@ -38,9 +40,9 @@ class VehicleControllerTest {
                 "DHAKA-METRO-GA-11-2233",
                 "Toyota",
                 "Hiace",
-                2019,
-                "VAN",
-                "White",
+                "Stark Logistics",
+                VehicleType.VAN,
+                VehicleStatus.ACTIVE,
                 Instant.parse("2026-11-09T12:00:00Z"),
                 Instant.parse("2026-11-09T12:00:00Z")
         );
@@ -54,7 +56,10 @@ class VehicleControllerTest {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].vehicleNumber").value("DHAKA-METRO-GA-11-2233"));
+                .andExpect(jsonPath("$[0].vehicleNumber").value("DHAKA-METRO-GA-11-2233"))
+                .andExpect(jsonPath("$[0].company").value("Stark Logistics"))
+                .andExpect(jsonPath("$[0].vehicleType").value("VAN"))
+                .andExpect(jsonPath("$[0].status").value("ACTIVE"));
     }
 
     @Test
@@ -64,9 +69,9 @@ class VehicleControllerTest {
                 "DHAKA-METRO-GA-11-2233",
                 "Toyota",
                 "Hiace",
-                2019,
-                "VAN",
-                "White",
+                "Stark Logistics",
+                VehicleType.VAN,
+                VehicleStatus.ACTIVE,
                 Instant.parse("2026-11-09T12:00:00Z"),
                 Instant.parse("2026-11-09T12:00:00Z")
         );
@@ -77,7 +82,8 @@ class VehicleControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.brand").value("Toyota"));
+                .andExpect(jsonPath("$.brand").value("Toyota"))
+                .andExpect(jsonPath("$.company").value("Stark Logistics"));
     }
 
     @Test
@@ -98,9 +104,9 @@ class VehicleControllerTest {
                 "DHAKA-METRO-GA-11-2233",
                 "Toyota",
                 "Hiace",
-                2019,
-                "VAN",
-                "White",
+                "Stark Logistics",
+                VehicleType.VAN,
+                VehicleStatus.ACTIVE,
                 Instant.parse("2026-11-09T12:00:00Z"),
                 Instant.parse("2026-11-09T12:00:00Z")
         );
@@ -112,9 +118,9 @@ class VehicleControllerTest {
                     "vehicleNumber": "dhaka-metro-ga-11-2233",
                     "brand": "Toyota",
                     "model": "Hiace",
-                    "manufactureYear": 2019,
+                    "company": "Stark Logistics",
                     "vehicleType": "VAN",
-                    "color": "White"
+                    "status": "ACTIVE"
                 }
                 """;
 
@@ -123,7 +129,94 @@ class VehicleControllerTest {
                         .content(jsonRequest))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/vehicles/10"))
-                .andExpect(jsonPath("$.id").value(10));
+                .andExpect(jsonPath("$.id").value(10))
+                .andExpect(jsonPath("$.company").value("Stark Logistics"));
+    }
+
+    @Test
+    void createVehicle_missingCompany_shouldReturn400() throws Exception {
+        String jsonRequest = """
+                {
+                    "vehicleNumber": "dhaka-metro-ga-11-2233",
+                    "brand": "Toyota",
+                    "model": "Hiace",
+                    "vehicleType": "VAN"
+                }
+                """;
+
+        mockMvc.perform(post("/api/vehicles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.fieldErrors.company").exists());
+    }
+
+    @Test
+    void createVehicle_invalidVehicleType_shouldReturn400WithFieldErrors() throws Exception {
+        String jsonRequest = """
+                {
+                    "vehicleNumber": "dhaka-metro-ga-11-2233",
+                    "brand": "Toyota",
+                    "model": "Hiace",
+                    "company": "Stark Logistics",
+                    "vehicleType": "SPACESHIP"
+                }
+                """;
+
+        mockMvc.perform(post("/api/vehicles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.fieldErrors.vehicleType").exists());
+    }
+
+    @Test
+    void createVehicle_invalidStatus_shouldReturn400WithFieldErrors() throws Exception {
+        String jsonRequest = """
+                {
+                    "vehicleNumber": "dhaka-metro-ga-11-2233",
+                    "brand": "Toyota",
+                    "model": "Hiace",
+                    "company": "Stark Logistics",
+                    "vehicleType": "CAR",
+                    "status": "DESTROYED"
+                }
+                """;
+
+        mockMvc.perform(post("/api/vehicles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.fieldErrors.status").exists());
+    }
+
+    @Test
+    void createVehicle_duplicateNumber_shouldReturn409() throws Exception {
+        when(vehicleService.createVehicle(any(VehicleRequest.class)))
+                .thenThrow(new DuplicateResourceException(
+                        "Vehicle number DHAKA-METRO-GA-11-2233 already exists",
+                        Map.of("vehicleNumber", "already exists")
+                ));
+
+        String jsonRequest = """
+                {
+                    "vehicleNumber": "dhaka-metro-ga-11-2233",
+                    "brand": "Toyota",
+                    "model": "Hiace",
+                    "company": "Stark Logistics",
+                    "vehicleType": "VAN"
+                }
+                """;
+
+        mockMvc.perform(post("/api/vehicles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.fieldErrors.vehicleNumber").value("already exists"));
     }
 
     @Test
@@ -133,9 +226,9 @@ class VehicleControllerTest {
                 "DHAKA-METRO-GA-11-2233",
                 "Toyota Updated",
                 "Hiace",
-                2020,
-                "VAN",
-                "White",
+                "Stark Corp",
+                VehicleType.VAN,
+                VehicleStatus.MAINTENANCE,
                 Instant.parse("2026-11-09T12:00:00Z"),
                 Instant.parse("2026-11-09T12:00:00Z")
         );
@@ -147,9 +240,9 @@ class VehicleControllerTest {
                     "vehicleNumber": "DHAKA-METRO-GA-11-2233",
                     "brand": "Toyota Updated",
                     "model": "Hiace",
-                    "manufactureYear": 2020,
+                    "company": "Stark Corp",
                     "vehicleType": "VAN",
-                    "color": "White"
+                    "status": "MAINTENANCE"
                 }
                 """;
 
@@ -157,7 +250,9 @@ class VehicleControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.brand").value("Toyota Updated"));
+                .andExpect(jsonPath("$.brand").value("Toyota Updated"))
+                .andExpect(jsonPath("$.company").value("Stark Corp"))
+                .andExpect(jsonPath("$.status").value("MAINTENANCE"));
     }
 
     @Test
@@ -173,8 +268,9 @@ class VehicleControllerTest {
                     "vehicleNumber": "DHAKA-METRO-BA-12-3456",
                     "brand": "Toyota",
                     "model": "Hiace",
-                    "manufactureYear": 2020,
-                    "vehicleType": "VAN"
+                    "company": "Stark Logistics",
+                    "vehicleType": "VAN",
+                    "status": "ACTIVE"
                 }
                 """;
 

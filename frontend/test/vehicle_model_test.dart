@@ -10,9 +10,9 @@ void main() {
         'vehicleNumber': 'DHAKA-METRO-GA-11-2233',
         'brand': 'Toyota',
         'model': 'Hiace',
-        'manufactureYear': 2019,
+        'company': 'Stark Logistics',
         'vehicleType': 'VAN',
-        'color': 'White',
+        'status': 'ACTIVE',
         'createdAt': '2026-11-09T12:00:00.000Z',
         'updatedAt': '2026-11-09T12:00:00.000Z',
       };
@@ -23,9 +23,9 @@ void main() {
       expect(vehicle.vehicleNumber, 'DHAKA-METRO-GA-11-2233');
       expect(vehicle.brand, 'Toyota');
       expect(vehicle.model, 'Hiace');
-      expect(vehicle.manufactureYear, 2019);
+      expect(vehicle.company, 'Stark Logistics');
       expect(vehicle.vehicleType, 'VAN');
-      expect(vehicle.color, 'White');
+      expect(vehicle.status, 'ACTIVE');
       expect(vehicle.createdAt, DateTime.parse('2026-11-09T12:00:00.000Z'));
       expect(vehicle.updatedAt, DateTime.parse('2026-11-09T12:00:00.000Z'));
 
@@ -34,15 +34,17 @@ void main() {
       expect(serialized['vehicleNumber'], 'DHAKA-METRO-GA-11-2233');
       expect(serialized['brand'], 'Toyota');
       expect(serialized['model'], 'Hiace');
-      expect(serialized['manufactureYear'], 2019);
+      expect(serialized['company'], 'Stark Logistics');
       expect(serialized['vehicleType'], 'VAN');
-      expect(serialized['color'], 'White');
+      expect(serialized['status'], 'ACTIVE');
 
       final requestBody = vehicle.toRequestBody();
       expect(requestBody.containsKey('id'), isFalse);
       expect(requestBody.containsKey('createdAt'), isFalse);
       expect(requestBody.containsKey('updatedAt'), isFalse);
       expect(requestBody['vehicleNumber'], 'DHAKA-METRO-GA-11-2233');
+      expect(requestBody['company'], 'Stark Logistics');
+      expect(requestBody['status'], 'ACTIVE');
     });
   });
 
@@ -73,4 +75,3 @@ void main() {
     });
   });
 }
-

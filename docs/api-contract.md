@@ -1,22 +1,21 @@
 # API Contract: Assignment 1 (Core Vehicle CRUD)
 
 Base path: `/api`. All bodies are JSON (`Content-Type: application/json`).
-
-> Adjust the vehicle fields to match your course's screens/spec. Keep this file and the code in sync.
+JSON fields are camelCase; database columns are snake_case.
 
 ## Vehicle object
 
-| Field | Type | Rules |
-|---|---|---|
-| `id` | number | server-generated, read-only |
-| `vehicleNumber` | string | required, 3-30 chars, trimmed, stored UPPERCASE, **unique** (case-insensitive) |
-| `brand` | string | required, max 50 |
-| `model` | string | required, max 50 |
-| `manufactureYear` | number | required, 1980 to current year + 1 |
-| `vehicleType` | string | required, e.g. CAR, VAN, TRUCK, BUS, MOTORCYCLE |
-| `color` | string | optional, max 30 |
-| `createdAt` | string (ISO-8601) | server-generated, read-only |
-| `updatedAt` | string (ISO-8601) | server-generated, read-only |
+| JSON field | DB column | Type | Rules |
+|---|---|---|---|
+| `id` | `id` | number | server-generated, read-only |
+| `brand` | `brand` | string | required, max 50 |
+| `model` | `model` | string | required, max 50 |
+| `vehicleNumber` | `vehicle_number` | string | required, 3-20 chars, trimmed, stored UPPERCASE, **unique** (case-insensitive) |
+| `company` | `company` | string | required, max 100 (the company that owns/operates the vehicle) |
+| `vehicleType` | `vehicle_type` | string (enum) | required, one of `CAR`, `VAN`, `TRUCK`, `BUS`, `MOTORCYCLE`, `OTHER` |
+| `status` | `status` | string (enum) | required, one of `ACTIVE`, `INACTIVE`, `MAINTENANCE`; defaults to `ACTIVE` if omitted on create |
+| `createdAt` | `created_at` | string (ISO-8601) | server-generated, read-only |
+| `updatedAt` | `updated_at` | string (ISO-8601) | server-generated, read-only |
 
 ## Endpoints
 
@@ -27,12 +26,12 @@ List all vehicles (Assignment 2 adds search/filter/sort/pagination query params)
 [
   {
     "id": 1,
-    "vehicleNumber": "DHAKA-METRO-GA-11-2233",
     "brand": "Toyota",
     "model": "Hiace",
-    "manufactureYear": 2019,
+    "vehicleNumber": "DHAKA-METRO-GA-11-2233",
+    "company": "Stark Logistics",
     "vehicleType": "VAN",
-    "color": "White",
+    "status": "ACTIVE",
     "createdAt": "2026-11-09T12:00:00Z",
     "updatedAt": "2026-11-09T12:00:00Z"
   }
@@ -44,19 +43,19 @@ List all vehicles (Assignment 2 adds search/filter/sort/pagination query params)
 - **404** not found
 
 ### POST /api/vehicles
-Request body: vehicle fields (no `id`, `createdAt`, `updatedAt`).
+Request body: vehicle fields without `id`, `createdAt`, `updatedAt`.
 ```json
 {
-  "vehicleNumber": "dhaka-metro-ga-11-2233",
   "brand": "Toyota",
   "model": "Hiace",
-  "manufactureYear": 2019,
+  "vehicleNumber": "dhaka-metro-ga-11-2233",
+  "company": "Stark Logistics",
   "vehicleType": "VAN",
-  "color": "White"
+  "status": "ACTIVE"
 }
 ```
 - **201** created vehicle object (with `Location: /api/vehicles/{id}` header)
-- **400** validation error
+- **400** validation error (including an unknown `vehicleType` or `status` value)
 - **409** duplicate vehicle number
 
 ### PUT /api/vehicles/{id}
@@ -87,9 +86,10 @@ For 400, `fieldErrors` maps each invalid field to a message. For 404/409 `fieldE
 Allowed origins come from env var `CORS_ALLOWED_ORIGINS` (comma-separated). Allow methods GET, POST, PUT, DELETE, OPTIONS.
 
 ## Acceptance criteria (Assignment 1)
-1. List screen shows real DB rows; empty state shown when none.
+1. List screen shows real DB rows (vehicle number, brand, model, company, type, status); empty state shown when none.
 2. Adding a vehicle persists it and it appears in the list after refresh.
 3. Adding a duplicate vehicle number (any letter case, extra spaces) shows a clear error on the form.
 4. Editing keeps data consistent; saving without changing the number does not trigger a duplicate error.
 5. Deleting asks for confirmation, then removes the row from DB and UI.
-6. No mock data remains in the frontend.
+6. Status is shown as a badge and can be set on the add/edit form.
+7. No mock data remains in the frontend.

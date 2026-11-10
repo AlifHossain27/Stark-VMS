@@ -8,50 +8,53 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "vehicles", uniqueConstraints = {
-    @UniqueConstraint(name = "uk_vehicles_vehicle_number", columnNames = {"vehicleNumber"})
+    @UniqueConstraint(name = "uk_vehicles_vehicle_number", columnNames = {"vehicle_number"})
 })
 public class Vehicle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 30)
+    @Column(name = "vehicle_number", nullable = false, unique = true, length = 50)
     private String vehicleNumber;
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "brand", nullable = false, length = 50)
     private String brand;
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "model", nullable = false, length = 50)
     private String model;
 
-    @Column(nullable = false)
-    private Integer manufactureYear;
+    @Column(name = "company", nullable = false, length = 100)
+    private String company;
 
-    @Column(nullable = false, length = 30)
-    private String vehicleType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "vehicle_type", nullable = false, length = 30)
+    private VehicleType vehicleType;
 
-    @Column(length = 30)
-    private String color;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 30)
+    private VehicleStatus status = VehicleStatus.ACTIVE;
 
     @CreationTimestamp
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
     @UpdateTimestamp
-    @Column(nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
     public Vehicle() {
     }
 
-    public Vehicle(String vehicleNumber, String brand, String model, Integer manufactureYear, String vehicleType, String color) {
+    public Vehicle(String vehicleNumber, String brand, String model, String company, VehicleType vehicleType, VehicleStatus status) {
         this.vehicleNumber = vehicleNumber;
         this.brand = brand;
         this.model = model;
-        this.manufactureYear = manufactureYear;
+        this.company = company;
         this.vehicleType = vehicleType;
-        this.color = color;
+        this.status = status != null ? status : VehicleStatus.ACTIVE;
     }
 
     @PrePersist
@@ -59,6 +62,9 @@ public class Vehicle {
     public void normalize() {
         if (this.vehicleNumber != null) {
             this.vehicleNumber = this.vehicleNumber.trim().toUpperCase();
+        }
+        if (this.status == null) {
+            this.status = VehicleStatus.ACTIVE;
         }
     }
 
@@ -94,28 +100,28 @@ public class Vehicle {
         this.model = model;
     }
 
-    public Integer getManufactureYear() {
-        return manufactureYear;
+    public String getCompany() {
+        return company;
     }
 
-    public void setManufactureYear(Integer manufactureYear) {
-        this.manufactureYear = manufactureYear;
+    public void setCompany(String company) {
+        this.company = company;
     }
 
-    public String getVehicleType() {
+    public VehicleType getVehicleType() {
         return vehicleType;
     }
 
-    public void setVehicleType(String vehicleType) {
+    public void setVehicleType(VehicleType vehicleType) {
         this.vehicleType = vehicleType;
     }
 
-    public String getColor() {
-        return color;
+    public VehicleStatus getStatus() {
+        return status;
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void setStatus(VehicleStatus status) {
+        this.status = status;
     }
 
     public Instant getCreatedAt() {

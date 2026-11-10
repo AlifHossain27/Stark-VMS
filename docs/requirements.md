@@ -4,7 +4,20 @@
 Build a complete full-stack Vehicle Management System for Stark Group, from the first screen to a deployed product.
 
 ## Stack
-Flutter Web (frontend), Java + Spring Boot (backend), SQL database, REST APIs, GitHub, unit/API/end-to-end tests, Netlify (frontend) and Render (backend) for deployment.
+Flutter Web (frontend), Java + Spring Boot (backend), SQL database, REST APIs, GitHub, unit/API/end-to-end testing, Netlify (frontend) and Render (backend) for deployment.
+
+## Vehicle data model
+| Field | Notes |
+|---|---|
+| id | primary key, generated |
+| brand | e.g. Toyota |
+| model | e.g. Hiace |
+| vehicle_number | unique, case-insensitive |
+| company | company that owns/operates the vehicle |
+| vehicle_type | CAR, VAN, TRUCK, BUS, MOTORCYCLE, OTHER |
+| status | ACTIVE, INACTIVE, MAINTENANCE (default ACTIVE) |
+| created_at | set automatically |
+| updated_at | updated automatically |
 
 ## Assignment 1: Rebuild the Stark Group VMS (deadline 22 Nov 2026)
 - Vehicle List
@@ -20,8 +33,8 @@ Flutter Web (frontend), Java + Spring Boot (backend), SQL database, REST APIs, G
 2. Document Expiry Tracking: store expiry dates; show expired / expiring-soon indicators.
 3. Vehicle Maintenance Management: service/maintenance date, type, cost, workshop/vendor, notes.
 4. Maintenance History: previous maintenance records per vehicle.
-5. Vehicle Status Management: ACTIVE, INACTIVE, MAINTENANCE.
-6. Vehicle Search: primarily by Vehicle Number and other relevant fields.
+5. Vehicle Status Management: ACTIVE, INACTIVE, MAINTENANCE (the `status` field already exists from Assignment 1; add the status-change workflow and any rules, e.g. MAINTENANCE while a service is open).
+6. Vehicle Search: primarily by Vehicle Number and other relevant fields (brand, model, company).
 7. Filtering, Sorting & Pagination: server-side.
 8. Driver Management: driver CRUD with relevant driver information.
 9. Driver-Vehicle Assignment: assign or change a driver for a vehicle.

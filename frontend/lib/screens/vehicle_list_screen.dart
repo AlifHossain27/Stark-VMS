@@ -35,8 +35,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
     'TRUCK',
     'BUS',
     'MOTORCYCLE',
-    'SUV',
-    'PICKUP',
+    'OTHER',
   ];
 
   @override
@@ -102,7 +101,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
           v.vehicleNumber.toLowerCase().contains(query) ||
           v.brand.toLowerCase().contains(query) ||
           v.model.toLowerCase().contains(query) ||
-          (v.color?.toLowerCase().contains(query) ?? false);
+          v.company.toLowerCase().contains(query);
       return matchesType && matchesQuery;
     }).toList();
   }
@@ -119,13 +118,58 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
         return const Color(0xFF4F46E5);
       case 'MOTORCYCLE':
         return const Color(0xFF9333EA);
-      case 'SUV':
-        return const Color(0xFF0284C7);
-      case 'PICKUP':
-        return const Color(0xFFE11D48);
+      case 'OTHER':
       default:
         return AppColors.textSecondary;
     }
+  }
+
+  Widget _buildStatusBadge(String status) {
+    final Color color;
+    final String label = status.toUpperCase();
+    switch (label) {
+      case 'ACTIVE':
+        color = AppColors.success;
+        break;
+      case 'MAINTENANCE':
+        color = AppColors.amberAccent;
+        break;
+      case 'INACTIVE':
+      default:
+        color = AppColors.textSecondary;
+        break;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withAlpha(20),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withAlpha(60)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -189,7 +233,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
                         runSpacing: 4,
                         children: [
                           const Text(
-                            'Vehicles Directory',
+                            'Fleet Directory',
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w800,
@@ -227,17 +271,19 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 10,
+                  runSpacing: 4,
                   children: [
                     const Text(
-                      'Vehicles Directory',
+                      'Fleet Directory',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w800,
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(width: 10),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
@@ -318,7 +364,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
                   controller: _searchController,
                   onChanged: (_) => setState(() {}),
                   decoration: InputDecoration(
-                    hintText: 'Search by vehicle number, brand, model, or color...',
+                    hintText: 'Search by vehicle number, brand, model, or company...',
                     hintStyle: const TextStyle(fontSize: 13, color: AppColors.textMuted),
                     prefixIcon: const Icon(Icons.search_rounded, size: 20, color: AppColors.textMuted),
                     suffixIcon: _searchController.text.isNotEmpty
@@ -560,7 +606,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
         borderRadius: BorderRadius.circular(16),
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final dynamicSpacing = ((constraints.maxWidth - 660) / 5).clamp(24.0, 72.0);
+            final dynamicSpacing = ((constraints.maxWidth - 720) / 6).clamp(20.0, 60.0);
             return SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: ConstrainedBox(
@@ -578,168 +624,160 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
                     letterSpacing: 0.8,
                     color: AppColors.textMuted,
                   ),
-              columns: const [
-                DataColumn(label: Text('REGISTRATION NUMBER')),
-                DataColumn(label: Text('MAKE & MODEL')),
-                DataColumn(label: Text('VEHICLE TYPE')),
-                DataColumn(label: Text('YEAR')),
-                DataColumn(label: Text('COLOR')),
-                DataColumn(label: Text('ACTIONS')),
-              ],
-              rows: vehicles.map((v) {
-                final badgeColor = _typeBadgeColor(v.vehicleType);
-                return DataRow(
-                  cells: [
-                    // Vehicle Number
-                    DataCell(
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceSubtle,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: AppColors.border),
-                        ),
-                        child: Text(
-                          v.vehicleNumber,
-                          style: const TextStyle(
-                            fontFamily: 'monospace',
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Make & Model
-                    DataCell(
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
+                  columns: const [
+                    DataColumn(label: Text('VEHICLE NUMBER')),
+                    DataColumn(label: Text('BRAND')),
+                    DataColumn(label: Text('MODEL')),
+                    DataColumn(label: Text('COMPANY')),
+                    DataColumn(label: Text('TYPE')),
+                    DataColumn(label: Text('STATUS')),
+                    DataColumn(label: Text('ACTIONS')),
+                  ],
+                  rows: vehicles.map((v) {
+                    final badgeColor = _typeBadgeColor(v.vehicleType);
+                    return DataRow(
+                      cells: [
+                        // Vehicle Number
+                        DataCell(
                           Container(
-                            padding: const EdgeInsets.all(7),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withAlpha(12),
+                              color: AppColors.surfaceSubtle,
                               borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: AppColors.border),
                             ),
-                            child: const Icon(
-                              Icons.directions_car_rounded,
-                              size: 16,
-                              color: AppColors.primary,
+                            child: Text(
+                              v.vehicleNumber,
+                              style: const TextStyle(
+                                fontFamily: 'monospace',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                                color: AppColors.textPrimary,
+                              ),
                             ),
                           ),
-                          const SizedBox(width: 10),
+                        ),
+                        // Brand
+                        DataCell(
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(7),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withAlpha(12),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.directions_car_rounded,
+                                  size: 16,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                v.brand,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Model
+                        DataCell(
                           Text(
-                            '${v.brand} ${v.model}',
+                            v.model,
                             style: const TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
                               color: AppColors.textPrimary,
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    // Type Badge
-                    DataCell(
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: badgeColor.withAlpha(20),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: badgeColor.withAlpha(60)),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 6,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                color: badgeColor,
-                                shape: BoxShape.circle,
-                              ),
+                        // Company
+                        DataCell(
+                          Text(
+                            v.company,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textSecondary,
                             ),
-                            const SizedBox(width: 6),
-                            Text(
-                              v.vehicleType,
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: badgeColor,
-                              ),
+                          ),
+                        ),
+                        // Type Badge
+                        DataCell(
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: badgeColor.withAlpha(20),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: badgeColor.withAlpha(60)),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    // Year
-                    DataCell(
-                      Text(
-                        v.manufactureYear.toString(),
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ),
-                    // Color
-                    DataCell(
-                      v.color != null && v.color!.isNotEmpty
-                          ? Row(
+                            child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Container(
-                                  width: 10,
-                                  height: 10,
+                                  width: 6,
+                                  height: 6,
                                   decoration: BoxDecoration(
-                                    color: AppColors.textMuted,
+                                    color: badgeColor,
                                     shape: BoxShape.circle,
-                                    border: Border.all(color: AppColors.border),
                                   ),
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
-                                  v.color!,
-                                  style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                                  v.vehicleType,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: badgeColor,
+                                  ),
                                 ),
                               ],
-                            )
-                          : const Text('—', style: TextStyle(color: AppColors.textMuted)),
-                    ),
-                    // Action Buttons
-                    DataCell(
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.edit_outlined, size: 18),
-                            tooltip: 'Edit Vehicle',
-                            color: AppColors.accent,
-                            hoverColor: AppColors.accent.withAlpha(20),
-                            onPressed: () => _openFormModal(context, v),
+                            ),
                           ),
-                          const SizedBox(width: 4),
-                          IconButton(
-                            icon: const Icon(Icons.delete_outline_rounded, size: 18),
-                            tooltip: 'Delete Vehicle',
-                            color: AppColors.error,
-                            hoverColor: AppColors.error.withAlpha(20),
-                            onPressed: () => _handleDelete(context, v),
+                        ),
+                        // Status Badge
+                        DataCell(
+                          _buildStatusBadge(v.status),
+                        ),
+                        // Action Buttons
+                        DataCell(
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.edit_outlined, size: 18),
+                                tooltip: 'Edit Vehicle',
+                                color: AppColors.accent,
+                                hoverColor: AppColors.accent.withAlpha(20),
+                                onPressed: () => _openFormModal(context, v),
+                              ),
+                              const SizedBox(width: 4),
+                              IconButton(
+                                icon: const Icon(Icons.delete_outline_rounded, size: 18),
+                                tooltip: 'Delete Vehicle',
+                                color: AppColors.error,
+                                hoverColor: AppColors.error.withAlpha(20),
+                                onPressed: () => _handleDelete(context, v),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
-          ),
-        );
-      },
-    ),
-  ),
-);
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
 
   Widget _buildModernCardList(BuildContext context, List<Vehicle> vehicles) {
