@@ -15,7 +15,7 @@ Monorepo for a course project: fleet/vehicle management.
 - Frontend build: `cd frontend && flutter build web --dart-define=API_BASE_URL=<url>`
 
 ## Working rules
-1. Read `docs/requirements.md` and `docs/api-contract.md` before changing code.
+1. Read `docs/requirements.md` and `docs/api-contract.md` before changing code. Read `docs/design-guidelines.md` before UI work.
 2. Work in small vertical slices (one feature, backend -> frontend). Do not build the whole app at once.
 3. If an endpoint changes, update `docs/api-contract.md` FIRST, then the backend, then the frontend.
 4. Never return JPA entities from controllers. Use request/response DTOs.
@@ -36,6 +36,7 @@ Monorepo for a course project: fleet/vehicle management.
 - One state-management approach throughout (Riverpod or Provider).
 - Every screen handles loading, error, and empty states.
 - API base URL comes only from `String.fromEnvironment('API_BASE_URL')`.
+- Follow docs/design-guidelines.md. Use only tokens from lib/theme/; never hard-code colors, font sizes or spacing in widgets.
 
 ## Definition of done (per feature)
 - [ ] Contract updated

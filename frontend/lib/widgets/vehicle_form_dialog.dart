@@ -4,6 +4,8 @@ import '../models/vehicle.dart';
 import '../providers/vehicle_provider.dart';
 import '../services/api_exception.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_spacing.dart';
+import '../theme/app_text_styles.dart';
 
 class VehicleFormDialog extends StatefulWidget {
   final Vehicle? vehicle;
@@ -113,7 +115,7 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Vehicle ${widget.vehicle!.vehicleNumber} updated successfully!'),
-              backgroundColor: Colors.green.shade700,
+              backgroundColor: AppColors.success,
             ),
           );
           Navigator.of(context).pop(true);
@@ -124,7 +126,7 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Vehicle ${created.vehicleNumber} registered successfully!'),
-              backgroundColor: Colors.green.shade700,
+              backgroundColor: AppColors.success,
             ),
           );
           Navigator.of(context).pop(true);
@@ -139,7 +141,7 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.message),
-            backgroundColor: Colors.red.shade700,
+            backgroundColor: AppColors.danger,
           ),
         );
       }
@@ -148,7 +150,7 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Unexpected error: $e'),
-            backgroundColor: Colors.red.shade700,
+            backgroundColor: AppColors.danger,
           ),
         );
       }
@@ -169,22 +171,19 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
         : 'Enter vehicle asset details to add to the Stark fleet database.';
 
     return Dialog(
-      backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      backgroundColor: AppColors.transparent,
+      insetPadding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.s16,
+        vertical: AppSpacing.s24,
+      ),
       child: Container(
         width: 580,
         constraints: const BoxConstraints(maxHeight: 740),
         decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(AppRadius.card),
           border: Border.all(color: AppColors.border),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(25),
-              blurRadius: 32,
-              offset: const Offset(0, 16),
-            ),
-          ],
+          boxShadow: AppShadows.cardHover,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -192,14 +191,19 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
           children: [
             // Modal Header
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 20, 16, 16),
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.s24,
+                AppSpacing.s16,
+                AppSpacing.s16,
+                AppSpacing.s16,
+              ),
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(AppSpacing.s8),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withAlpha(16),
-                      borderRadius: BorderRadius.circular(10),
+                      color: AppColors.primaryTint,
+                      borderRadius: BorderRadius.circular(AppRadius.input),
                     ),
                     child: Icon(
                       isEditMode ? Icons.edit_note_rounded : Icons.directions_car_rounded,
@@ -207,28 +211,18 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
                       size: 22,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AppSpacing.s12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
+                        Text(title, style: AppTextStyles.h3),
+                        const SizedBox(height: AppSpacing.s4),
                         Text(
                           subtitle,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: AppColors.textSecondary,
-                          ),
+                          style: AppTextStyles.label.copyWith(fontWeight: FontWeight.w400),
                         ),
                       ],
                     ),
@@ -238,19 +232,19 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
                     icon: const Icon(Icons.close_rounded, size: 20),
                     tooltip: 'Close',
                     style: IconButton.styleFrom(
-                      foregroundColor: AppColors.textMuted,
-                      hoverColor: AppColors.surfaceSubtle,
+                      foregroundColor: AppColors.textSecondary,
+                      hoverColor: AppColors.neutralTint,
                     ),
                   ),
                 ],
               ),
             ),
-            const Divider(height: 1, thickness: 1, color: AppColors.border),
+            const Divider(height: 1),
 
             // Scrollable Form Body
             Flexible(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(AppSpacing.s24),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -261,11 +255,10 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
                       TextFormField(
                         controller: _vehicleNumberController,
                         textCapitalization: TextCapitalization.characters,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'e.g. DHAKA-METRO-GA-11-2233',
-                          prefixIcon: const Icon(Icons.pin_outlined, size: 18),
+                          prefixIcon: Icon(Icons.pin_outlined, size: 18),
                           helperText: 'Unique identifier, 3-20 characters',
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                         validator: (val) {
                           final serverErr = _serverFieldErrors['vehicleNumber'];
@@ -279,7 +272,7 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 18),
+                      const SizedBox(height: AppSpacing.s16),
 
                       // 2. Brand & Model (2 Columns)
                       Row(
@@ -292,10 +285,9 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
                                 _buildLabel('Brand *'),
                                 TextFormField(
                                   controller: _brandController,
-                                  decoration: InputDecoration(
+                                  decoration: const InputDecoration(
                                     hintText: 'e.g. Toyota, Hino',
-                                    prefixIcon: const Icon(Icons.business_outlined, size: 18),
-                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                                    prefixIcon: Icon(Icons.business_outlined, size: 18),
                                   ),
                                   validator: (val) {
                                     final serverErr = _serverFieldErrors['brand'];
@@ -312,7 +304,7 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
                               ],
                             ),
                           ),
-                          const SizedBox(width: 14),
+                          const SizedBox(width: AppSpacing.s12),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -320,10 +312,9 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
                                 _buildLabel('Model *'),
                                 TextFormField(
                                   controller: _modelController,
-                                  decoration: InputDecoration(
+                                  decoration: const InputDecoration(
                                     hintText: 'e.g. Hiace, Coaster',
-                                    prefixIcon: const Icon(Icons.directions_car_filled_outlined, size: 18),
-                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                                    prefixIcon: Icon(Icons.directions_car_filled_outlined, size: 18),
                                   ),
                                   validator: (val) {
                                     final serverErr = _serverFieldErrors['model'];
@@ -342,16 +333,15 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 18),
+                      const SizedBox(height: AppSpacing.s16),
 
                       // 3. Company Field
                       _buildLabel('Company / Operating Entity *'),
                       TextFormField(
                         controller: _companyController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'e.g. Stark Logistics, Stark Transit',
-                          prefixIcon: const Icon(Icons.corporate_fare_outlined, size: 18),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                          prefixIcon: Icon(Icons.corporate_fare_outlined, size: 18),
                         ),
                         validator: (val) {
                           final serverErr = _serverFieldErrors['company'];
@@ -365,7 +355,7 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 18),
+                      const SizedBox(height: AppSpacing.s16),
 
                       // 4. Vehicle Type & Status Row (2 Columns)
                       Row(
@@ -378,14 +368,13 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
                                 _buildLabel('Vehicle Type *'),
                                 DropdownButtonFormField<String>(
                                   initialValue: _selectedVehicleType,
-                                  decoration: InputDecoration(
-                                    prefixIcon: const Icon(Icons.category_outlined, size: 18),
-                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                                  decoration: const InputDecoration(
+                                    prefixIcon: Icon(Icons.category_outlined, size: 18),
                                   ),
                                   items: _vehicleTypes.map((type) {
                                     return DropdownMenuItem(
                                       value: type,
-                                      child: Text(type, style: const TextStyle(fontSize: 14)),
+                                      child: Text(type),
                                     );
                                   }).toList(),
                                   onChanged: (val) {
@@ -405,7 +394,7 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
                               ],
                             ),
                           ),
-                          const SizedBox(width: 14),
+                          const SizedBox(width: AppSpacing.s12),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -413,14 +402,13 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
                                 _buildLabel('Status *'),
                                 DropdownButtonFormField<String>(
                                   initialValue: _selectedStatus,
-                                  decoration: InputDecoration(
-                                    prefixIcon: const Icon(Icons.toggle_on_outlined, size: 18),
-                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                                  decoration: const InputDecoration(
+                                    prefixIcon: Icon(Icons.toggle_on_outlined, size: 18),
                                   ),
                                   items: _statusValues.map((status) {
                                     return DropdownMenuItem(
                                       value: status,
-                                      child: Text(status, style: const TextStyle(fontSize: 14)),
+                                      child: Text(status),
                                     );
                                   }).toList(),
                                   onChanged: (val) {
@@ -449,38 +437,36 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
             ),
 
             // Modal Footer
-            const Divider(height: 1, thickness: 1, color: AppColors.border),
+            const Divider(height: 1),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.s24,
+                vertical: AppSpacing.s16,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   OutlinedButton(
                     onPressed: _isSubmitting ? null : () => Navigator.of(context).pop(),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-                    ),
                     child: const Text('Cancel'),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AppSpacing.s12),
                   ElevatedButton.icon(
                     onPressed: _isSubmitting ? null : _submitForm,
                     icon: _isSubmitting
                         ? const SizedBox(
                             width: 16,
                             height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppColors.white,
+                            ),
                           )
                         : Icon(isEditMode ? Icons.check_rounded : Icons.add_rounded, size: 18),
                     label: Text(
                       _isSubmitting
                           ? 'Saving...'
                           : (isEditMode ? 'Update Vehicle' : 'Register Vehicle'),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                     ),
                   ),
                 ],
@@ -494,15 +480,8 @@ class _VehicleFormDialogState extends State<VehicleFormDialog> {
 
   Widget _buildLabel(String label) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Text(
-        label,
-        style: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
-        ),
-      ),
+      padding: const EdgeInsets.only(bottom: AppSpacing.s4),
+      child: Text(label, style: AppTextStyles.label),
     );
   }
 }

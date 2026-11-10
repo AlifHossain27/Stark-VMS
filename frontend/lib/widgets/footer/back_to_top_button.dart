@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_spacing.dart';
+import '../../theme/app_text_styles.dart';
 
 class BackToTopButton extends StatefulWidget {
   final VoidCallback? onPressed;
@@ -18,7 +20,7 @@ class _BackToTopButtonState extends State<BackToTopButton> {
 
   @override
   Widget build(BuildContext context) {
-    final color = _isHovered ? Colors.white : AppColors.textMuted;
+    final color = _isHovered ? AppColors.white : AppColors.onDarkSubtle;
 
     return Semantics(
       label: 'Scroll back to the top of the page',
@@ -31,12 +33,15 @@ class _BackToTopButtonState extends State<BackToTopButton> {
           onTap: widget.onPressed,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 180),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.s12,
+              vertical: AppSpacing.s8,
+            ),
             decoration: BoxDecoration(
-              color: _isHovered ? Colors.white.withAlpha(16) : Colors.transparent,
-              borderRadius: BorderRadius.circular(8),
+              color: _isHovered ? AppColors.white.withAlpha(16) : AppColors.transparent,
+              borderRadius: BorderRadius.circular(AppRadius.input),
               border: Border.all(
-                color: _isHovered ? Colors.white.withAlpha(30) : Colors.transparent,
+                color: _isHovered ? AppColors.onDarkBorder : AppColors.transparent,
               ),
             ),
             child: Row(
@@ -44,13 +49,13 @@ class _BackToTopButtonState extends State<BackToTopButton> {
               children: [
                 Text(
                   'Back to top',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
+                  style: AppTextStyles.label.copyWith(
                     color: color,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.2,
                   ),
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: AppSpacing.s4),
                 Icon(
                   Icons.arrow_upward_rounded,
                   size: 15,
@@ -64,4 +69,3 @@ class _BackToTopButtonState extends State<BackToTopButton> {
     );
   }
 }
-

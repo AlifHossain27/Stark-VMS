@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_spacing.dart';
+import '../../theme/app_text_styles.dart';
 import '../vehicle_form_dialog.dart';
 import 'back_to_top_button.dart';
 import 'footer_link_data.dart';
 import 'footer_link_group.dart';
 
+/// Site footer: Deep Blue surface with white text
+/// ("Deep Blue: sidebar, top navigation, footer").
 class SiteFooter extends StatelessWidget {
   final VoidCallback? onBackToTop;
 
@@ -30,15 +34,14 @@ class SiteFooter extends StatelessWidget {
     final content = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // 1. Thin Accent Gradient Top Line
+        // 1. Thin Accent Line (Deep Blue / Corporate Blue blend only)
         Container(
           height: 2,
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
                 AppColors.primary,
-                AppColors.accent,
-                AppColors.tealAccent,
+                AppColors.deepBlue,
               ],
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
@@ -48,10 +51,10 @@ class SiteFooter extends StatelessWidget {
 
         // 2. Main Footer Body
         Container(
-          color: AppColors.primaryDark,
+          color: AppColors.deepBlue,
           padding: EdgeInsets.symmetric(
-            horizontal: isDesktop ? 48 : (isTablet ? 32 : 20),
-            vertical: isDesktop ? 64 : 40,
+            horizontal: isDesktop ? AppSpacing.s48 : (isTablet ? AppSpacing.s32 : AppSpacing.s16),
+            vertical: isDesktop ? AppSpacing.s48 : AppSpacing.s32,
           ),
           child: Center(
             child: Container(
@@ -67,14 +70,14 @@ class SiteFooter extends StatelessWidget {
                   else
                     _buildMobileColumns(context, productLinks),
 
-                  const SizedBox(height: 48),
+                  const SizedBox(height: AppSpacing.s48),
 
                   // Divider
                   Container(
                     height: 1,
-                    color: Colors.white.withAlpha(20),
+                    color: AppColors.onDarkBorder,
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AppSpacing.s24),
 
                   // 3. Bottom Bar
                   _buildBottomBar(isMobile),
@@ -106,51 +109,49 @@ class SiteFooter extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(7),
+              padding: const EdgeInsets.all(AppSpacing.s8),
               decoration: BoxDecoration(
                 color: AppColors.primary,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(AppRadius.input),
               ),
               child: const Icon(
                 Icons.directions_boat_filled,
-                color: Colors.white,
+                color: AppColors.white,
                 size: 18,
               ),
             ),
-            const SizedBox(width: 10),
-            const Text(
+            const SizedBox(width: AppSpacing.s8),
+            Text(
               'STARK VMS',
-              style: TextStyle(
-                fontSize: 17,
+              style: AppTextStyles.h3.copyWith(
+                color: AppColors.white,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.2,
-                color: Colors.white,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: AppSpacing.s12),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 340),
-          child: const Text(
+          child: Text(
             'Enterprise fleet control, vehicle asset tracking, and compliance management portal built for Stark Group.',
-            style: TextStyle(
-              fontSize: 13,
-              height: 1.6,
-              color: AppColors.textMuted,
-            ),
+            style: AppTextStyles.bodySmall.copyWith(color: AppColors.onDarkSubtle),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.s16),
         OutlinedButton.icon(
           onPressed: () => context.go('/dashboard'),
           icon: const Icon(Icons.dashboard_outlined, size: 16),
           label: const Text('Open Dashboard'),
           style: OutlinedButton.styleFrom(
-            foregroundColor: Colors.white,
-            side: BorderSide(color: Colors.white.withAlpha(50)),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            foregroundColor: AppColors.white,
+            side: BorderSide(color: AppColors.onDarkBorder),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.s16,
+              vertical: AppSpacing.s8,
+            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.input)),
           ),
         ),
       ],
@@ -165,7 +166,7 @@ class SiteFooter extends StatelessWidget {
           flex: 4,
           child: _buildBrandBlock(context),
         ),
-        const SizedBox(width: 48),
+        const SizedBox(width: AppSpacing.s48),
         Expanded(
           flex: 2,
           child: FooterLinkGroup(
@@ -173,7 +174,7 @@ class SiteFooter extends StatelessWidget {
             links: productLinks,
           ),
         ),
-        const SizedBox(width: 32),
+        const SizedBox(width: AppSpacing.s32),
         const Expanded(
           flex: 3,
           child: FooterLinkGroup(
@@ -181,7 +182,7 @@ class SiteFooter extends StatelessWidget {
             links: FooterLinkData.featureLinks,
           ),
         ),
-        const SizedBox(width: 32),
+        const SizedBox(width: AppSpacing.s32),
         const Expanded(
           flex: 3,
           child: FooterLinkGroup(
@@ -200,7 +201,7 @@ class SiteFooter extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(child: _buildBrandBlock(context)),
-            const SizedBox(width: 32),
+            const SizedBox(width: AppSpacing.s32),
             Expanded(
               child: FooterLinkGroup(
                 title: 'Product',
@@ -209,7 +210,7 @@ class SiteFooter extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 36),
+        const SizedBox(height: AppSpacing.s32),
         const Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -219,7 +220,7 @@ class SiteFooter extends StatelessWidget {
                 links: FooterLinkData.featureLinks,
               ),
             ),
-            SizedBox(width: 32),
+            SizedBox(width: AppSpacing.s32),
             Expanded(
               child: FooterLinkGroup(
                 title: 'Resources',
@@ -237,7 +238,7 @@ class SiteFooter extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildBrandBlock(context),
-        const SizedBox(height: 36),
+        const SizedBox(height: AppSpacing.s32),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -247,7 +248,7 @@ class SiteFooter extends StatelessWidget {
                 links: productLinks,
               ),
             ),
-            const SizedBox(width: 24),
+            const SizedBox(width: AppSpacing.s24),
             const Expanded(
               child: FooterLinkGroup(
                 title: 'Features',
@@ -256,7 +257,7 @@ class SiteFooter extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 28),
+        const SizedBox(height: AppSpacing.s24),
         const FooterLinkGroup(
           title: 'Resources',
           links: FooterLinkData.resourceLinks,
@@ -275,12 +276,9 @@ class SiteFooter extends StatelessWidget {
           Text(
             copyrightText,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 12,
-              color: AppColors.textMuted,
-            ),
+            style: AppTextStyles.label.copyWith(color: AppColors.onDarkSubtle),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.s12),
           BackToTopButton(onPressed: onBackToTop),
         ],
       );
@@ -291,10 +289,7 @@ class SiteFooter extends StatelessWidget {
       children: [
         Text(
           copyrightText,
-          style: const TextStyle(
-            fontSize: 12,
-            color: AppColors.textMuted,
-          ),
+          style: AppTextStyles.label.copyWith(color: AppColors.onDarkSubtle),
         ),
         BackToTopButton(onPressed: onBackToTop),
       ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
 
 class StatStatementCard extends StatelessWidget {
@@ -17,40 +18,33 @@ class StatStatementCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AppSpacing.s24),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.card),
         border: Border.all(color: AppColors.border),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(4),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: AppShadows.card,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(AppSpacing.s8),
             decoration: BoxDecoration(
-              color: AppColors.primary.withAlpha(16),
-              borderRadius: BorderRadius.circular(10),
+              color: AppColors.primaryTint,
+              borderRadius: BorderRadius.circular(AppRadius.input),
             ),
             child: Icon(icon, color: AppColors.primary, size: 22),
           ),
-          const SizedBox(height: 16),
-          Text(title, style: AppTextStyles.cardTitle.copyWith(fontSize: 17)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.s16),
+          Text(title, style: AppTextStyles.h3),
+          const SizedBox(height: AppSpacing.s8),
           Text(
             description,
-            style: AppTextStyles.bodyMedium,
+            style: AppTextStyles.bodySmall,
           ),
         ],
       ),
     );
   }
 }
-

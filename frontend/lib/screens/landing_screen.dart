@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
 import '../widgets/feature_card.dart';
 import '../widgets/footer/site_footer.dart';
@@ -73,7 +74,8 @@ class _LandingScreenState extends State<LandingScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 70), // Spacing for sticky top bar
+                // Spacing that clears the sticky top bar.
+                const SizedBox(height: LandingNavBar.height + AppSpacing.s4),
 
                 // 1. Hero Section with subtle gradient
                 _buildHeroSection(context, isDesktop, reduceMotion),
@@ -126,68 +128,61 @@ class _LandingScreenState extends State<LandingScreen> {
       children: [
         // Badge
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-          decoration: BoxDecoration(
-            color: AppColors.primary.withAlpha(16),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.primary.withAlpha(30)),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.s12,
+            vertical: AppSpacing.s4,
           ),
-          child: const Row(
+          decoration: BoxDecoration(
+            color: AppColors.primaryTint,
+            borderRadius: BorderRadius.circular(AppRadius.input),
+            border: Border.all(color: AppColors.primaryTintBorder),
+          ),
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.shield_outlined, size: 14, color: AppColors.primary),
-              SizedBox(width: 6),
+              const Icon(Icons.shield_outlined, size: 14, color: AppColors.primary),
+              const SizedBox(width: AppSpacing.s4),
               Text(
                 'Next-Gen Fleet Operations',
-                style: TextStyle(
+                style: AppTextStyles.label.copyWith(
                   color: AppColors.primary,
-                  fontSize: 12,
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.s16),
 
         // Headline
         const Text(
           'Enterprise Fleet Control Built for Stark Group',
-          style: AppTextStyles.heroHeadline,
+          style: AppTextStyles.display,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.s16),
 
         // Subtext
-        const Text(
+        Text(
           'A centralized, intelligent vehicle management platform ensuring fleet compliance, real-time asset tracking, and proactive maintenance.',
-          style: AppTextStyles.heroSubtext,
+          style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: AppSpacing.s32),
 
-        // Buttons
+        // Buttons: one filled primary action plus a secondary outlined one.
+        // Colors, text styles and padding come from the button theme.
         Wrap(
-          spacing: 16,
-          runSpacing: 12,
+          spacing: AppSpacing.s16,
+          runSpacing: AppSpacing.s12,
           children: [
             ElevatedButton.icon(
               onPressed: () => context.go('/dashboard'),
               icon: const Icon(Icons.dashboard_rounded, size: 18),
               label: const Text('Go to Dashboard'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-              ),
             ),
             OutlinedButton.icon(
               onPressed: () => context.go('/vehicles'),
               icon: const Icon(Icons.directions_car_outlined, size: 18),
               label: const Text('View Vehicles'),
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
-                textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-              ),
             ),
           ],
         ),
@@ -207,7 +202,7 @@ class _LandingScreenState extends State<LandingScreen> {
                         .fadeIn(duration: 450.ms, curve: Curves.easeOut)
                         .slideY(begin: 0.08, end: 0, duration: 450.ms),
               ),
-              const SizedBox(width: 48),
+              const SizedBox(width: AppSpacing.s48),
               const Expanded(
                 flex: 5,
                 child: HeroMockDashboard(),
@@ -223,26 +218,16 @@ class _LandingScreenState extends State<LandingScreen> {
                       .animate()
                       .fadeIn(duration: 450.ms, curve: Curves.easeOut)
                       .slideY(begin: 0.08, end: 0, duration: 450.ms),
-              const SizedBox(height: 40),
+              const SizedBox(height: AppSpacing.s32),
               const Center(child: HeroMockDashboard()),
             ],
           );
 
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.white,
-            AppColors.primary.withAlpha(8),
-            AppColors.background,
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+      decoration: BoxDecoration(gradient: AppColors.heroGradient),
       padding: EdgeInsets.symmetric(
-        horizontal: isDesktop ? 64 : 24,
-        vertical: isDesktop ? 64 : 40,
+        horizontal: isDesktop ? AppSpacing.s48 : AppSpacing.s24,
+        vertical: isDesktop ? AppSpacing.s48 : AppSpacing.s32,
       ),
       child: Center(
         child: Container(
@@ -276,25 +261,25 @@ class _LandingScreenState extends State<LandingScreen> {
       child: Container(
         constraints: const BoxConstraints(maxWidth: 1200),
         padding: EdgeInsets.symmetric(
-          horizontal: isDesktop ? 48 : 24,
-          vertical: 40,
+          horizontal: isDesktop ? AppSpacing.s48 : AppSpacing.s24,
+          vertical: AppSpacing.s32,
         ),
         child: isDesktop
             ? Row(
                 children: [
                   Expanded(child: claims[0]),
-                  const SizedBox(width: 20),
+                  const SizedBox(width: AppSpacing.s16),
                   Expanded(child: claims[1]),
-                  const SizedBox(width: 20),
+                  const SizedBox(width: AppSpacing.s16),
                   Expanded(child: claims[2]),
                 ],
               )
             : Column(
                 children: [
                   claims[0],
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.s16),
                   claims[1],
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.s16),
                   claims[2],
                 ],
               ),
@@ -347,32 +332,38 @@ class _LandingScreenState extends State<LandingScreen> {
       child: Container(
         constraints: const BoxConstraints(maxWidth: 1200),
         padding: EdgeInsets.symmetric(
-          horizontal: isDesktop ? 48 : 24,
-          vertical: 48,
+          horizontal: isDesktop ? AppSpacing.s48 : AppSpacing.s24,
+          vertical: AppSpacing.s48,
         ),
         child: Column(
           children: [
-            const Text('POWERFUL CAPABILITIES', style: AppTextStyles.caption),
-            const SizedBox(height: 8),
-            const Text('Engineered for Modern Fleet Control', style: AppTextStyles.sectionHeading),
-            const SizedBox(height: 12),
+            Text(
+              'POWERFUL CAPABILITIES',
+              style: AppTextStyles.micro.copyWith(
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.8,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.s8),
+            const Text('Engineered for Modern Fleet Control', style: AppTextStyles.h1),
+            const SizedBox(height: AppSpacing.s12),
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 640),
               child: const Text(
                 'Everything Stark Group needs to manage vehicles, reduce downtime, and maintain compliance.',
                 textAlign: TextAlign.center,
-                style: AppTextStyles.sectionSubheading,
+                style: AppTextStyles.bodySmall,
               ),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: AppSpacing.s32),
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: features.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: isDesktop ? 3 : (isTablet ? 2 : 1),
-                mainAxisSpacing: 20,
-                crossAxisSpacing: 20,
+                mainAxisSpacing: AppSpacing.s16,
+                crossAxisSpacing: AppSpacing.s16,
                 mainAxisExtent: 270,
               ),
               itemBuilder: (context, index) => features[index],
@@ -388,22 +379,28 @@ class _LandingScreenState extends State<LandingScreen> {
       key: _howItWorksKey,
       child: Container(
         constraints: const BoxConstraints(maxWidth: 1200),
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s32, vertical: AppSpacing.s48),
         child: Column(
           children: [
-            const Text('WORKFLOW', style: AppTextStyles.caption),
-            const SizedBox(height: 8),
-            const Text('How Stark VMS Works', style: AppTextStyles.sectionHeading),
-            const SizedBox(height: 12),
+            Text(
+              'WORKFLOW',
+              style: AppTextStyles.micro.copyWith(
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.8,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.s8),
+            const Text('How Stark VMS Works', style: AppTextStyles.h1),
+            const SizedBox(height: AppSpacing.s12),
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 600),
               child: const Text(
                 'Three simple steps to transition from scattered spreadsheets to an enterprise fleet control system.',
                 textAlign: TextAlign.center,
-                style: AppTextStyles.sectionSubheading,
+                style: AppTextStyles.bodySmall,
               ),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: AppSpacing.s32),
             const HowItWorksSection(),
           ],
         ),
@@ -415,58 +412,53 @@ class _LandingScreenState extends State<LandingScreen> {
     return Center(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 1200),
-        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
-        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 48),
+        margin: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.s24,
+          vertical: AppSpacing.s48,
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.s32,
+          vertical: AppSpacing.s48,
+        ),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF0F172A), Color(0xFF1E3A8A)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withAlpha(40),
-              blurRadius: 24,
-              offset: const Offset(0, 10),
-            ),
-          ],
+          // Deep Blue / Corporate Blue blend (the allowed gradient pair).
+          gradient: AppColors.ctaGradient,
+          borderRadius: BorderRadius.circular(AppRadius.card),
+          boxShadow: AppShadows.cardHover,
         ),
         child: Column(
           children: [
-            const Text(
+            Text(
               'Ready to Streamline Your Fleet Operations?',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 28,
+              style: AppTextStyles.h1.copyWith(
+                color: AppColors.white,
                 fontWeight: FontWeight.w900,
-                letterSpacing: -0.5,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.s12),
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 600),
               child: Text(
                 'Access the live fleet dashboard, view registered corporate assets, and manage vehicles today.',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.grey.shade300,
-                  fontSize: 15,
-                  height: 1.5,
-                ),
+                style: AppTextStyles.body.copyWith(color: AppColors.onDarkSubtle),
               ),
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: AppSpacing.s24),
+            // White-filled CTA on the gradient; Corporate Blue label text.
             ElevatedButton.icon(
               onPressed: () => context.go('/dashboard'),
               icon: const Icon(Icons.arrow_forward_rounded, size: 18),
               label: const Text('Open Dashboard'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
+                backgroundColor: AppColors.white,
                 foregroundColor: AppColors.primary,
-                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
-                textStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+                textStyle: AppTextStyles.button.copyWith(fontWeight: FontWeight.w800),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.s24,
+                  vertical: AppSpacing.s16,
+                ),
               ),
             ),
           ],

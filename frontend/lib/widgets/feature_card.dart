@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../theme/app_colors.dart';
+import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
 
 class FeatureCard extends StatefulWidget {
@@ -32,21 +34,15 @@ class _FeatureCardState extends State<FeatureCard> {
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOut,
         transform: Matrix4.translationValues(0, _isHovered ? -5 : 0, 0),
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(AppSpacing.s16),
         decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(AppRadius.card),
           border: Border.all(
-            color: _isHovered ? AppColors.accent : AppColors.border,
+            color: _isHovered ? AppColors.primary : AppColors.border,
             width: _isHovered ? 1.5 : 1.0,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: _isHovered ? AppColors.primary.withAlpha(20) : Colors.black.withAlpha(4),
-              blurRadius: _isHovered ? 20 : 8,
-              offset: Offset(0, _isHovered ? 8 : 2),
-            ),
-          ],
+          boxShadow: _isHovered ? AppShadows.cardHover : AppShadows.card,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,63 +51,66 @@ class _FeatureCardState extends State<FeatureCard> {
               children: [
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(AppSpacing.s8),
                   decoration: BoxDecoration(
-                    color: _isHovered
-                        ? AppColors.primary
-                        : AppColors.primary.withAlpha(16),
-                    borderRadius: BorderRadius.circular(10),
+                    color: _isHovered ? AppColors.primary : AppColors.primaryTint,
+                    borderRadius: BorderRadius.circular(AppRadius.input),
                   ),
                   child: Icon(
                     widget.icon,
                     size: 22,
-                    color: _isHovered ? Colors.white : AppColors.primary,
+                    color: _isHovered ? AppColors.white : AppColors.primary,
                   ),
                 ),
                 const Spacer(),
                 if (widget.isComingSoon)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.s8,
+                      vertical: AppSpacing.s4,
+                    ),
                     decoration: BoxDecoration(
-                      color: AppColors.surfaceSubtle,
-                      borderRadius: BorderRadius.circular(12),
+                      color: AppColors.neutralTint,
+                      borderRadius: BorderRadius.circular(AppRadius.input),
                       border: Border.all(color: AppColors.border),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Coming soon',
-                      style: TextStyle(
-                        fontSize: 11,
+                      style: AppTextStyles.label.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: AppColors.textMuted,
+                        letterSpacing: 0.3,
                       ),
                     ),
                   )
                 else
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.s8,
+                      vertical: AppSpacing.s4,
+                    ),
                     decoration: BoxDecoration(
-                      color: Colors.green.shade50,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.green.shade200),
+                      color: AppColors.successTint,
+                      borderRadius: BorderRadius.circular(AppRadius.input),
+                      border: Border.all(color: AppColors.successTintBorder),
                     ),
                     child: Text(
                       'Active',
-                      style: TextStyle(
-                        fontSize: 11,
+                      style: AppTextStyles.label.copyWith(
+                        color: AppColors.success,
                         fontWeight: FontWeight.w700,
-                        color: Colors.green.shade700,
+                        letterSpacing: 0.3,
                       ),
                     ),
                   ),
               ],
             ),
-            const SizedBox(height: 12),
-            Text(widget.title, style: AppTextStyles.cardTitle),
-            const SizedBox(height: 6),
+            const SizedBox(height: AppSpacing.s12),
+            Text(widget.title, style: AppTextStyles.h3),
+            const SizedBox(height: AppSpacing.s4),
             Expanded(
               child: Text(
                 widget.description,
-                style: AppTextStyles.bodyMedium,
+                style: AppTextStyles.bodySmall,
               ),
             ),
           ],

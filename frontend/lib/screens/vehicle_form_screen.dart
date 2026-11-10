@@ -5,6 +5,8 @@ import '../models/vehicle.dart';
 import '../providers/vehicle_provider.dart';
 import '../services/api_exception.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_spacing.dart';
+import '../theme/app_text_styles.dart';
 
 class VehicleFormScreen extends StatefulWidget {
   final Vehicle? vehicle;
@@ -111,7 +113,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Vehicle ${widget.vehicle!.vehicleNumber} updated successfully!'),
-              backgroundColor: Colors.green.shade700,
+              backgroundColor: AppColors.success,
             ),
           );
           if (context.canPop()) {
@@ -126,7 +128,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Vehicle ${created.vehicleNumber} registered successfully!'),
-              backgroundColor: Colors.green.shade700,
+              backgroundColor: AppColors.success,
             ),
           );
           if (context.canPop()) {
@@ -145,7 +147,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.message),
-            backgroundColor: Colors.red.shade700,
+            backgroundColor: AppColors.danger,
           ),
         );
       }
@@ -154,7 +156,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Unexpected error: $e'),
-            backgroundColor: Colors.red.shade700,
+            backgroundColor: AppColors.danger,
           ),
         );
       }
@@ -188,62 +190,41 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
                   }
                 },
               ),
-              title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              backgroundColor: Colors.white,
-              foregroundColor: AppColors.textPrimary,
-              elevation: 0,
-              bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(1),
-                child: Container(color: AppColors.border, height: 1),
-              ),
+              title: Text(title),
             )
           : null,
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.s24,
+            vertical: AppSpacing.s32,
+          ),
           child: Container(
             constraints: const BoxConstraints(maxWidth: 680),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(AppRadius.card),
               border: Border.all(color: AppColors.border),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(6),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+              boxShadow: AppShadows.card,
             ),
-            padding: const EdgeInsets.all(32),
+            padding: const EdgeInsets.all(AppSpacing.s32),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
-                  ),
-                  const SizedBox(height: 28),
+                  Text(title, style: AppTextStyles.h2),
+                  const SizedBox(height: AppSpacing.s4),
+                  Text(subtitle, style: AppTextStyles.bodySmall),
+                  const SizedBox(height: AppSpacing.s24),
 
                   // 1. Vehicle Number Field
                   _buildSectionLabel('Vehicle Registration Number *'),
                   TextFormField(
                     controller: _vehicleNumberController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'e.g. DHAKA-METRO-GA-11-2233',
-                      prefixIcon: const Icon(Icons.pin_outlined, size: 20),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      prefixIcon: Icon(Icons.pin_outlined, size: 20),
                       helperText: 'Must be 3-30 characters, stored in uppercase',
                     ),
                     textCapitalization: TextCapitalization.characters,
@@ -261,7 +242,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: AppSpacing.s16),
 
                   // 2. Brand & Model Row
                   Row(
@@ -274,10 +255,9 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
                             _buildSectionLabel('Brand *'),
                             TextFormField(
                               controller: _brandController,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 hintText: 'e.g. Toyota, Hino',
-                                prefixIcon: const Icon(Icons.business, size: 20),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                                prefixIcon: Icon(Icons.business, size: 20),
                               ),
                               validator: (val) {
                                 final serverErr = _serverFieldErrors['brand'];
@@ -292,7 +272,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
                           ],
                         ),
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: AppSpacing.s16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -300,10 +280,9 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
                             _buildSectionLabel('Model *'),
                             TextFormField(
                               controller: _modelController,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 hintText: 'e.g. Hiace, Civic',
-                                prefixIcon: const Icon(Icons.drive_eta, size: 20),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                                prefixIcon: Icon(Icons.drive_eta, size: 20),
                               ),
                               validator: (val) {
                                 final serverErr = _serverFieldErrors['model'];
@@ -320,16 +299,15 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: AppSpacing.s16),
 
                   // 3. Company Field
                   _buildSectionLabel('Company / Operating Entity *'),
                   TextFormField(
                     controller: _companyController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'e.g. Stark Logistics, Stark Transit',
-                      prefixIcon: const Icon(Icons.corporate_fare_outlined, size: 20),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      prefixIcon: Icon(Icons.corporate_fare_outlined, size: 20),
                     ),
                     validator: (val) {
                       final serverErr = _serverFieldErrors['company'];
@@ -341,7 +319,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: AppSpacing.s16),
 
                   // 4. Vehicle Type & Status Row
                   Row(
@@ -356,9 +334,8 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
                               initialValue: _vehicleTypes.contains(_selectedVehicleType)
                                   ? _selectedVehicleType
                                   : _vehicleTypes.first,
-                              decoration: InputDecoration(
-                                prefixIcon: const Icon(Icons.commute, size: 20),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                              decoration: const InputDecoration(
+                                prefixIcon: Icon(Icons.commute, size: 20),
                               ),
                               items: _vehicleTypes.map((type) {
                                 return DropdownMenuItem(
@@ -381,7 +358,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
                           ],
                         ),
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: AppSpacing.s16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -391,9 +368,8 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
                               initialValue: _statusValues.contains(_selectedStatus)
                                   ? _selectedStatus
                                   : _statusValues.first,
-                              decoration: InputDecoration(
-                                prefixIcon: const Icon(Icons.toggle_on_outlined, size: 20),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                              decoration: const InputDecoration(
+                                prefixIcon: Icon(Icons.toggle_on_outlined, size: 20),
                               ),
                               items: _statusValues.map((status) {
                                 return DropdownMenuItem(
@@ -418,7 +394,7 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 36),
+                  const SizedBox(height: AppSpacing.s32),
 
                   // 5. Submit and Cancel Buttons
                   Row(
@@ -434,33 +410,25 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
                                   context.go('/dashboard');
                                 }
                               },
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                          side: const BorderSide(color: AppColors.border),
-                        ),
                         child: const Text('Cancel'),
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: AppSpacing.s16),
                       ElevatedButton.icon(
                         onPressed: _isSubmitting ? null : _submitForm,
                         icon: _isSubmitting
                             ? const SizedBox(
                                 width: 16,
                                 height: 16,
-                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: AppColors.white,
+                                ),
                               )
                             : Icon(isEditMode ? Icons.check : Icons.add, size: 18),
                         label: Text(
                           _isSubmitting
                               ? 'Saving...'
                               : (isEditMode ? 'Update Vehicle' : 'Register Vehicle'),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          elevation: 0,
                         ),
                       ),
                     ],
@@ -476,15 +444,8 @@ class _VehicleFormScreenState extends State<VehicleFormScreen> {
 
   Widget _buildSectionLabel(String label) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Text(
-        label,
-        style: const TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFF334155),
-        ),
-      ),
+      padding: const EdgeInsets.only(bottom: AppSpacing.s4),
+      child: Text(label, style: AppTextStyles.label),
     );
   }
 }

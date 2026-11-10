@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_spacing.dart';
+import '../../theme/app_text_styles.dart';
 import 'footer_link_data.dart';
 
 class FooterLink extends StatefulWidget {
@@ -38,7 +40,6 @@ class _FooterLinkState extends State<FooterLink> {
           content: Text('External Link: ${widget.item.externalUrl}'),
           action: SnackBarAction(
             label: 'Dismiss',
-            textColor: Colors.white,
             onPressed: () {},
           ),
           duration: const Duration(seconds: 3),
@@ -53,7 +54,7 @@ class _FooterLinkState extends State<FooterLink> {
 
     if (isSoon) {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.s4),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -61,28 +62,27 @@ class _FooterLinkState extends State<FooterLink> {
               child: Text(
                 widget.item.label,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textMuted.withAlpha(160),
+                style: AppTextStyles.bodySmall.copyWith(
+                  color: AppColors.onDarkSubtle,
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.s8),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.white.withAlpha(16),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.white.withAlpha(24)),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.s4,
+                vertical: AppSpacing.s4,
               ),
-              child: const Text(
+              decoration: BoxDecoration(
+                color: AppColors.white.withAlpha(16),
+                borderRadius: BorderRadius.circular(AppRadius.input),
+                border: Border.all(color: AppColors.white.withAlpha(24)),
+              ),
+              child: Text(
                 'Soon',
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textMuted,
-                  letterSpacing: 0.3,
+                style: AppTextStyles.micro.copyWith(
+                  color: AppColors.onDarkSubtle,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
@@ -92,8 +92,8 @@ class _FooterLinkState extends State<FooterLink> {
     }
 
     final textColor = _isHovered || _isFocused
-        ? Colors.white
-        : AppColors.textMuted;
+        ? AppColors.white
+        : AppColors.onDarkSubtle;
 
     return FocusableActionDetector(
       onShowFocusHighlight: (val) => setState(() => _isFocused = val),
@@ -105,7 +105,7 @@ class _FooterLinkState extends State<FooterLink> {
       child: GestureDetector(
         onTap: _handleTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6),
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.s4),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 180),
             curve: Curves.easeOut,
@@ -119,18 +119,16 @@ class _FooterLinkState extends State<FooterLink> {
                     size: 14,
                     color: textColor,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AppSpacing.s8),
                 ],
                 Flexible(
                   child: Text(
                     widget.item.label,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
+                    style: AppTextStyles.bodySmall.copyWith(
                       color: textColor,
                       decoration: _isHovered ? TextDecoration.underline : TextDecoration.none,
-                      decorationColor: Colors.white,
+                      decorationColor: AppColors.white,
                       decorationThickness: 1.5,
                     ),
                   ),

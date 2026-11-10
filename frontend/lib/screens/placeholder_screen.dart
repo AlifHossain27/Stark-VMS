@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
 
 class PlaceholderScreen extends StatelessWidget {
@@ -20,26 +21,20 @@ class PlaceholderScreen extends StatelessWidget {
     return Center(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 580),
-        padding: const EdgeInsets.all(40),
+        padding: const EdgeInsets.all(AppSpacing.s32),
         decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(AppRadius.card),
           border: Border.all(color: AppColors.border),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(6),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          boxShadow: AppShadows.card,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.surfaceSubtle,
+              padding: const EdgeInsets.all(AppSpacing.s16),
+              decoration: const BoxDecoration(
+                color: AppColors.neutralTint,
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -48,37 +43,38 @@ class PlaceholderScreen extends StatelessWidget {
                 color: AppColors.primary,
               ),
             ),
-            const SizedBox(height: 20),
-            Text(title, style: AppTextStyles.cardTitle.copyWith(fontSize: 22)),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.s16),
+            Text(title, style: AppTextStyles.h2),
+            const SizedBox(height: AppSpacing.s8),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.s8,
+                vertical: AppSpacing.s4,
+              ),
               decoration: BoxDecoration(
-                color: AppColors.surfaceSubtle,
-                borderRadius: BorderRadius.circular(6),
+                color: AppColors.neutralTint,
+                borderRadius: BorderRadius.circular(AppRadius.input),
                 border: Border.all(color: AppColors.border),
               ),
               child: Text(
                 routePath,
-                style: const TextStyle(
+                style: AppTextStyles.label.copyWith(
                   fontFamily: 'monospace',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
                   color: AppColors.primary,
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.s16),
             Text(
               subtitle ??
                   'This section is part of the Stark Fleet Management System shell. The CRUD functionality will be connected here.',
               textAlign: TextAlign.center,
-              style: AppTextStyles.bodyMedium,
+              style: AppTextStyles.bodySmall,
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: AppSpacing.s24),
             Wrap(
-              spacing: 12,
-              runSpacing: 12,
+              spacing: AppSpacing.s12,
+              runSpacing: AppSpacing.s12,
               alignment: WrapAlignment.center,
               children: [
                 OutlinedButton.icon(
@@ -99,4 +95,3 @@ class PlaceholderScreen extends StatelessWidget {
     );
   }
 }
-

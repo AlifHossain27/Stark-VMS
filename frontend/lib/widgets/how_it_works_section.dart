@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
 
 class HowItWorksSection extends StatelessWidget {
@@ -57,11 +58,12 @@ class HowItWorksSection extends StatelessWidget {
 
   Widget _buildStepItem(_StepData step) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AppSpacing.s24),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.card),
         border: Border.all(color: AppColors.border),
+        boxShadow: AppShadows.card,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,14 +76,13 @@ class HowItWorksSection extends StatelessWidget {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(AppRadius.input),
                 ),
                 child: Text(
                   step.number,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: AppTextStyles.label.copyWith(
+                    color: AppColors.white,
                     fontWeight: FontWeight.w900,
-                    fontSize: 14,
                   ),
                 ),
               ),
@@ -89,12 +90,12 @@ class HowItWorksSection extends StatelessWidget {
               Icon(step.icon, size: 24, color: AppColors.primary),
             ],
           ),
-          const SizedBox(height: 18),
-          Text(step.title, style: AppTextStyles.cardTitle.copyWith(fontSize: 17)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.s16),
+          Text(step.title, style: AppTextStyles.h3),
+          const SizedBox(height: AppSpacing.s8),
           Text(
             step.description,
-            style: AppTextStyles.bodyMedium,
+            style: AppTextStyles.bodySmall,
           ),
         ],
       ),
@@ -135,4 +136,3 @@ class _StepData {
     required this.icon,
   });
 }
-

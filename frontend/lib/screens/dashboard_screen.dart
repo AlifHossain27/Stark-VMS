@@ -4,7 +4,10 @@ import 'package:provider/provider.dart';
 import '../models/vehicle.dart';
 import '../providers/vehicle_provider.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
+import '../widgets/page_header.dart';
+import '../widgets/status_badge.dart';
 import '../widgets/vehicle_form_dialog.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -34,17 +37,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Material(
       color: AppColors.background,
       child: SingleChildScrollView(
-        padding: EdgeInsets.all(isDesktop ? 32 : 16),
+        padding: EdgeInsets.all(isDesktop ? AppSpacing.s32 : AppSpacing.s16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 1. Operations Header & Quick Actions
             _buildHeader(context, isDesktop),
-            const SizedBox(height: 28),
+            const SizedBox(height: AppSpacing.s24),
 
             // 2. Metric Summary Cards
             _buildMetricsGrid(context, provider, isDesktop, isTablet),
-            const SizedBox(height: 36),
+            const SizedBox(height: AppSpacing.s32),
 
             // 3. Recent Vehicles Panel
             _buildRecentVehiclesPanel(context, provider),
@@ -55,84 +58,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildHeader(BuildContext context, bool isDesktop) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: isDesktop
-          ? Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Operations Command',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Real-time Stark Group fleet registry statistics and operational metrics.',
-                        style: AppTextStyles.bodyMedium,
-                      ),
-                    ],
-                  ),
-                ),
-                _buildQuickActions(context),
-              ],
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Operations Command',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Real-time Stark Group fleet registry statistics and operational metrics.',
-                  style: AppTextStyles.bodyMedium,
-                ),
-                const SizedBox(height: 16),
-                _buildQuickActions(context),
-              ],
-            ),
+    return PageHeader(
+      title: 'Operations Command',
+      subtitle: 'Real-time Stark Group fleet registry statistics and operational metrics.',
+      actions: _buildQuickActions(context),
     );
   }
 
   Widget _buildQuickActions(BuildContext context) {
     return Wrap(
-      spacing: 12,
-      runSpacing: 8,
+      spacing: AppSpacing.s12,
+      runSpacing: AppSpacing.s8,
       children: [
+        // The one primary action of this view.
         ElevatedButton.icon(
           onPressed: () => VehicleFormDialog.show(context),
           icon: const Icon(Icons.add_rounded, size: 18),
           label: const Text('Register vehicle'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          ),
         ),
         OutlinedButton.icon(
           onPressed: () => context.go('/vehicles'),
           icon: const Icon(Icons.directions_car_outlined, size: 18),
           label: const Text('View vehicles'),
-          style: OutlinedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          ),
         ),
       ],
     );
@@ -174,8 +121,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       itemCount: cards.length,
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 280,
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
+        mainAxisSpacing: AppSpacing.s16,
+        crossAxisSpacing: AppSpacing.s16,
         mainAxisExtent: 160,
       ),
       itemBuilder: (context, index) => cards[index],
@@ -188,18 +135,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final count = provider?.vehicles.length ?? 0;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.s16),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.primary.withAlpha(80), width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withAlpha(14),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(AppRadius.card),
+        // Featured card: slightly stronger primary border than the standard
+        // border token.
+        border: Border.all(color: AppColors.primaryTintBorder, width: 1.5),
+        boxShadow: AppShadows.card,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,10 +150,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AppSpacing.s8),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withAlpha(20),
-                  borderRadius: BorderRadius.circular(10),
+                  color: AppColors.primaryTint,
+                  borderRadius: BorderRadius.circular(AppRadius.input),
                 ),
                 child: const Icon(
                   Icons.directions_car_rounded,
@@ -220,18 +163,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.s8,
+                  vertical: AppSpacing.s4,
+                ),
                 decoration: BoxDecoration(
-                  color: Colors.green.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.green.shade200),
+                  color: AppColors.primaryTint,
+                  borderRadius: BorderRadius.circular(AppRadius.input),
+                  border: Border.all(color: AppColors.primaryTintBorder),
                 ),
                 child: Text(
                   'Live Data',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green.shade700,
+                  style: AppTextStyles.micro.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primary,
                   ),
                 ),
               ),
@@ -250,35 +195,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Expanded(
                   child: Text(
                     'Failed to load',
-                    style: TextStyle(fontSize: 12, color: AppColors.error, fontWeight: FontWeight.bold),
+                    style: AppTextStyles.label.copyWith(
+                      color: AppColors.danger,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
                 TextButton(
                   onPressed: () => provider?.fetchVehicles(),
-                  style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(40, 24)),
-                  child: const Text('Retry', style: TextStyle(fontSize: 12)),
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: const Size(40, 24),
+                  ),
+                  child: Text('Retry', style: AppTextStyles.label),
                 ),
               ],
             )
           else
             Text(
               '$count',
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w900,
+              style: AppTextStyles.h1.copyWith(
                 color: AppColors.textPrimary,
-                letterSpacing: -0.5,
+                fontWeight: FontWeight.w900,
               ),
             ),
           const SizedBox(height: 2),
-          const Text(
-            'Total vehicles',
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textSecondary,
-            ),
-          ),
+          Text('Total vehicles', style: AppTextStyles.label),
         ],
       ),
     );
@@ -290,10 +232,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     required String subtext,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.s16),
       decoration: BoxDecoration(
-        color: AppColors.surfaceSubtle.withAlpha(160),
-        borderRadius: BorderRadius.circular(16),
+        // Muted placeholder: neutral tint instead of a white surface.
+        color: AppColors.neutralTint,
+        borderRadius: BorderRadius.circular(AppRadius.card),
         border: Border.all(color: AppColors.border),
       ),
       child: Column(
@@ -302,38 +245,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(AppSpacing.s8),
                 decoration: BoxDecoration(
-                  color: AppColors.border.withAlpha(80),
-                  borderRadius: BorderRadius.circular(10),
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppRadius.input),
+                  border: Border.all(color: AppColors.border),
                 ),
-                child: Icon(icon, color: AppColors.textMuted, size: 20),
+                child: Icon(icon, color: AppColors.textSecondary, size: 20),
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: AppColors.border.withAlpha(60),
-                  borderRadius: BorderRadius.circular(12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.s8,
+                  vertical: AppSpacing.s4,
                 ),
-                child: const Text(
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppRadius.input),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Text(
                   'Coming soon',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textMuted,
+                  style: AppTextStyles.micro.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textSecondary,
                   ),
                 ),
               ),
             ],
           ),
           const Spacer(),
-          const Text(
+          Text(
             '--',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textMuted,
+            style: AppTextStyles.h2.copyWith(
+              fontWeight: FontWeight.w700,
+              color: AppColors.textSecondary,
             ),
           ),
           const SizedBox(height: 2),
@@ -341,11 +287,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textMuted,
-            ),
+            style: AppTextStyles.label,
           ),
         ],
       ),
@@ -359,63 +301,66 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.card),
         border: Border.all(color: AppColors.border),
+        boxShadow: AppShadows.card,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header with View All link
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.s16,
+              vertical: AppSpacing.s16,
+            ),
             child: Row(
               children: [
                 const Icon(Icons.history_rounded, size: 22, color: AppColors.primary),
-                const SizedBox(width: 10),
+                const SizedBox(width: AppSpacing.s8),
                 const Expanded(
                   child: Text(
                     'Recent Vehicles',
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
-                    ),
+                    style: AppTextStyles.h3,
                   ),
                 ),
                 TextButton.icon(
                   onPressed: () => context.go('/vehicles'),
-                  label: const Text('View all', style: TextStyle(fontWeight: FontWeight.w700)),
+                  label: Text(
+                    'View all',
+                    style: AppTextStyles.button.copyWith(fontWeight: FontWeight.w700),
+                  ),
                   icon: const Icon(Icons.arrow_forward_rounded, size: 16),
                 ),
               ],
             ),
           ),
-          const Divider(height: 1, color: AppColors.border),
+          const Divider(height: 1),
 
           // Content States
           if (isLoading)
             const Padding(
-              padding: EdgeInsets.all(48),
+              padding: EdgeInsets.all(AppSpacing.s48),
               child: Center(
                 child: CircularProgressIndicator(),
               ),
             )
           else if (hasError)
             Padding(
-              padding: const EdgeInsets.all(48),
+              padding: const EdgeInsets.all(AppSpacing.s48),
               child: Center(
                 child: Column(
                   children: [
-                    const Icon(Icons.cloud_off_rounded, size: 40, color: AppColors.error),
-                    const SizedBox(height: 12),
+                    const Icon(Icons.cloud_off_rounded, size: 40, color: AppColors.danger),
+                    const SizedBox(height: AppSpacing.s12),
                     Text(
                       provider?.errorMessage ?? 'Unable to connect to vehicle database',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: AppColors.textSecondary),
+                      style: AppTextStyles.bodySmall,
                     ),
-                    const SizedBox(height: 16),
-                    ElevatedButton.icon(
+                    const SizedBox(height: AppSpacing.s16),
+                    OutlinedButton.icon(
                       onPressed: () => provider?.fetchVehicles(),
                       icon: const Icon(Icons.refresh, size: 16),
                       label: const Text('Retry'),
@@ -426,46 +371,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
             )
           else if (vehicles.isEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
+              padding: const EdgeInsets.symmetric(
+                vertical: AppSpacing.s48,
+                horizontal: AppSpacing.s24,
+              ),
               child: Center(
                 child: Column(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceSubtle,
+                      padding: const EdgeInsets.all(AppSpacing.s16),
+                      decoration: const BoxDecoration(
+                        color: AppColors.neutralTint,
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
                         Icons.directions_car_outlined,
                         size: 40,
-                        color: AppColors.textMuted,
+                        color: AppColors.textSecondary,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSpacing.s16),
                     const Text(
                       'No vehicles registered yet',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
+                      style: AppTextStyles.h3,
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: AppSpacing.s4),
                     const Text(
                       'Get started by adding your first vehicle asset to the Stark Group fleet.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                      style: AppTextStyles.bodySmall,
                     ),
-                    const SizedBox(height: 20),
-                    ElevatedButton.icon(
+                    const SizedBox(height: AppSpacing.s16),
+                    OutlinedButton.icon(
                       onPressed: () => VehicleFormDialog.show(context),
                       icon: const Icon(Icons.add, size: 16),
                       label: const Text('Add vehicle'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                      ),
                     ),
                   ],
                 ),
@@ -486,31 +426,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: recent.length,
-      separatorBuilder: (context, index) => const Divider(height: 1, color: AppColors.border),
+      separatorBuilder: (context, index) => const Divider(height: 1),
       itemBuilder: (context, index) {
         final vehicle = recent[index];
-        final Color statusColor;
-        switch (vehicle.status.toUpperCase()) {
-          case 'ACTIVE':
-            statusColor = AppColors.success;
-            break;
-          case 'MAINTENANCE':
-            statusColor = AppColors.amberAccent;
-            break;
-          case 'INACTIVE':
-          default:
-            statusColor = AppColors.textSecondary;
-            break;
-        }
 
         return ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.s24,
+            vertical: AppSpacing.s8,
+          ),
           leading: Container(
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: AppColors.primary.withAlpha(16),
-              borderRadius: BorderRadius.circular(10),
+              color: AppColors.primaryTint,
+              borderRadius: BorderRadius.circular(AppRadius.input),
             ),
             child: const Icon(
               Icons.directions_car_rounded,
@@ -520,57 +450,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           title: Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 8,
-            runSpacing: 4,
+            spacing: AppSpacing.s8,
+            runSpacing: AppSpacing.s4,
             children: [
               Text(
                 '${vehicle.brand} ${vehicle.model}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                  color: AppColors.textPrimary,
-                ),
+                style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w700),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: statusColor.withAlpha(20),
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: statusColor.withAlpha(60)),
-                ),
-                child: Text(
-                  vehicle.status.toUpperCase(),
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: statusColor,
-                  ),
-                ),
-              ),
+              StatusBadge(status: vehicle.status),
             ],
           ),
           subtitle: Padding(
-            padding: const EdgeInsets.only(top: 4),
+            padding: const EdgeInsets.only(top: AppSpacing.s4),
             child: Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: 12,
-              runSpacing: 4,
+              spacing: AppSpacing.s12,
+              runSpacing: AppSpacing.s4,
               children: [
                 Text(
                   vehicle.vehicleNumber,
-                  style: const TextStyle(
-                    fontFamily: 'monospace',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textSecondary,
-                  ),
+                  style: AppTextStyles.label.copyWith(fontFamily: 'monospace'),
                 ),
                 Text(
                   vehicle.company,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: AppColors.textMuted,
-                  ),
+                  style: AppTextStyles.label.copyWith(fontWeight: FontWeight.w400),
                 ),
               ],
             ),
@@ -578,10 +481,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
           trailing: OutlinedButton(
             onPressed: () => VehicleFormDialog.show(context, vehicle),
             style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.s12,
+                vertical: AppSpacing.s4,
+              ),
               minimumSize: const Size(60, 32),
             ),
-            child: const Text('Edit', style: TextStyle(fontSize: 12)),
+            child: Text('Edit', style: AppTextStyles.label),
           ),
         );
       },

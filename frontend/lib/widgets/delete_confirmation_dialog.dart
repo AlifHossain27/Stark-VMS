@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/vehicle.dart';
+import '../theme/app_colors.dart';
+import '../theme/app_spacing.dart';
+import '../theme/app_text_styles.dart';
+import 'destructive_button.dart';
 
 class DeleteConfirmationDialog extends StatelessWidget {
   final Vehicle vehicle;
@@ -16,22 +20,18 @@ class DeleteConfirmationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.red.shade50,
+            padding: const EdgeInsets.all(AppSpacing.s8),
+            decoration: const BoxDecoration(
+              color: AppColors.dangerTint,
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.warning_amber_rounded, color: Colors.red.shade700, size: 24),
+            child: const Icon(Icons.warning_amber_rounded, color: AppColors.danger, size: 24),
           ),
-          const SizedBox(width: 12),
-          const Text(
-            'Delete Vehicle?',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-          ),
+          const SizedBox(width: AppSpacing.s12),
+          const Text('Delete Vehicle?'),
         ],
       ),
       content: ConstrainedBox(
@@ -40,33 +40,35 @@ class DeleteConfirmationDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Are you sure you want to permanently remove this vehicle from the Stark Fleet database?',
-              style: TextStyle(color: Colors.grey.shade700, fontSize: 14, height: 1.4),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.s16),
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AppSpacing.s12),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade300),
+                color: AppColors.neutralTint,
+                borderRadius: BorderRadius.circular(AppRadius.input),
+                border: Border.all(color: AppColors.border),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.directions_car, size: 20, color: Colors.black54),
-                  const SizedBox(width: 10),
+                  const Icon(Icons.directions_car, size: 20, color: AppColors.textSecondary),
+                  const SizedBox(width: AppSpacing.s8),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           vehicle.vehicleNumber,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                          style: AppTextStyles.label.copyWith(
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                         Text(
                           '${vehicle.brand} ${vehicle.model} • ${vehicle.company}',
-                          style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                          style: AppTextStyles.label.copyWith(fontWeight: FontWeight.w400),
                         ),
                       ],
                     ),
@@ -77,29 +79,21 @@ class DeleteConfirmationDialog extends StatelessWidget {
           ],
         ),
       ),
-      actionsPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      actionsPadding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.s16,
+        vertical: AppSpacing.s16,
+      ),
       actions: [
         OutlinedButton(
           onPressed: () => Navigator.of(context).pop(false),
-          style: OutlinedButton.styleFrom(
-            side: BorderSide(color: Colors.grey.shade300),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          ),
           child: const Text('Cancel'),
         ),
-        ElevatedButton.icon(
+        DestructiveButton(
           onPressed: () => Navigator.of(context).pop(true),
-          icon: const Icon(Icons.delete, size: 16),
+          icon: Icons.delete,
           label: const Text('Delete Vehicle'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red.shade700,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            elevation: 0,
-          ),
         ),
       ],
     );
   }
 }
-

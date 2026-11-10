@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_spacing.dart';
+import '../../theme/app_text_styles.dart';
 import 'footer_link.dart';
 import 'footer_link_data.dart';
 
@@ -21,17 +23,15 @@ class FooterLinkGroup extends StatelessWidget {
       children: [
         Text(
           title.toUpperCase(),
-          style: const TextStyle(
-            fontSize: 12,
+          style: AppTextStyles.label.copyWith(
+            color: AppColors.white,
             fontWeight: FontWeight.w800,
             letterSpacing: 1.0,
-            color: AppColors.surface,
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: AppSpacing.s12),
         ...links.map((link) => FooterLink(item: link)),
       ],
     );
   }
 }
-

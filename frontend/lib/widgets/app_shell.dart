@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_spacing.dart';
+import '../theme/app_text_styles.dart';
 import 'vehicle_form_dialog.dart';
 
 class AppShell extends StatelessWidget {
@@ -65,27 +67,17 @@ class AppShell extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(pageTitle, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        backgroundColor: AppColors.surface,
-        foregroundColor: AppColors.textPrimary,
-        elevation: 0,
+        title: Text(pageTitle),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: ElevatedButton.icon(
+            padding: const EdgeInsets.only(right: AppSpacing.s12),
+            child: _buildTopBarOutlinedButton(
               onPressed: () => VehicleFormDialog.show(context),
-              icon: const Icon(Icons.add, size: 16),
-              label: const Text('Register'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              ),
+              icon: Icons.add,
+              label: 'Register',
             ),
           ),
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(color: AppColors.border, height: 1),
-        ),
       ),
       drawer: Drawer(
         child: _buildSidebar(context, isDrawer: true),
@@ -99,38 +91,50 @@ class AppShell extends StatelessWidget {
     );
   }
 
+  /// Outlined button for the Deep Blue navigation chrome. Screen content
+  /// owns the one filled primary action per view, so shell buttons stay
+  /// outlined with white text on the dark surface.
+  Widget _buildTopBarOutlinedButton({
+    required VoidCallback onPressed,
+    required IconData icon,
+    required String label,
+  }) {
+    return OutlinedButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon, size: 16),
+      label: Text(label),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: AppColors.white,
+        side: const BorderSide(color: AppColors.onDarkBorder),
+      ),
+    );
+  }
+
   Widget _buildDesktopTopBar(BuildContext context, String title) {
     return Container(
       height: 68,
-      color: AppColors.surface,
-      padding: const EdgeInsets.symmetric(horizontal: 32),
+      color: AppColors.deepBlue,
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s32),
       child: Row(
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 20,
+            style: AppTextStyles.h3.copyWith(
+              color: AppColors.white,
               fontWeight: FontWeight.w800,
-              color: AppColors.textPrimary,
             ),
           ),
           const Spacer(),
-          OutlinedButton.icon(
+          _buildTopBarOutlinedButton(
             onPressed: () => context.go('/'),
-            icon: const Icon(Icons.home_outlined, size: 16),
-            label: const Text('Public Site'),
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            ),
+            icon: Icons.home_outlined,
+            label: 'Public Site',
           ),
-          const SizedBox(width: 12),
-          ElevatedButton.icon(
+          const SizedBox(width: AppSpacing.s12),
+          _buildTopBarOutlinedButton(
             onPressed: () => VehicleFormDialog.show(context),
-            icon: const Icon(Icons.add, size: 16),
-            label: const Text('Register Vehicle'),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            ),
+            icon: Icons.add,
+            label: 'Register Vehicle',
           ),
         ],
       ),
@@ -139,47 +143,45 @@ class AppShell extends StatelessWidget {
 
   Widget _buildSidebar(BuildContext context, {bool isDrawer = false}) {
     return Container(
-      color: AppColors.surface,
+      color: AppColors.deepBlue,
       child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Brand Wordmark
             Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(AppSpacing.s24),
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(AppSpacing.s8),
                     decoration: BoxDecoration(
                       color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(AppRadius.input),
                     ),
                     child: const Icon(
                       Icons.directions_boat_filled,
-                      color: Colors.white,
+                      color: AppColors.white,
                       size: 22,
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  const Column(
+                  const SizedBox(width: AppSpacing.s12),
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'STARK VMS',
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: AppTextStyles.body.copyWith(
+                          color: AppColors.white,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1.2,
-                          color: AppColors.textPrimary,
                         ),
                       ),
                       Text(
                         'Fleet Portal',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textSecondary,
-                          fontWeight: FontWeight.w500,
+                        style: AppTextStyles.label.copyWith(
+                          color: AppColors.onDarkSubtle,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ],
@@ -188,13 +190,13 @@ class AppShell extends StatelessWidget {
               ),
             ),
 
-            const Divider(height: 1, thickness: 1, color: AppColors.border),
-            const SizedBox(height: 16),
+            const Divider(height: 1, thickness: 1, color: AppColors.onDarkBorder),
+            const SizedBox(height: AppSpacing.s16),
 
             // Navigation Items
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s12),
                 children: [
                   _buildNavItem(
                     context: context,
@@ -207,7 +209,7 @@ class AppShell extends StatelessWidget {
                       context.go('/dashboard');
                     },
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.s4),
                   _buildNavItem(
                     context: context,
                     icon: Icons.directions_car_outlined,
@@ -219,16 +221,18 @@ class AppShell extends StatelessWidget {
                       context.go('/vehicles');
                     },
                   ),
-                  const SizedBox(height: 16),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  const SizedBox(height: AppSpacing.s16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.s16,
+                      vertical: AppSpacing.s8,
+                    ),
                     child: Text(
                       'UPCOMING MODULES',
-                      style: TextStyle(
-                        fontSize: 11,
+                      style: AppTextStyles.micro.copyWith(
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.8,
-                        color: AppColors.textMuted,
+                        color: AppColors.onDarkSubtle,
                       ),
                     ),
                   ),
@@ -236,12 +240,12 @@ class AppShell extends StatelessWidget {
                     icon: Icons.person_outline_rounded,
                     label: 'Drivers',
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.s4),
                   _buildDisabledNavItem(
                     icon: Icons.build_outlined,
                     label: 'Maintenance',
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.s4),
                   _buildDisabledNavItem(
                     icon: Icons.description_outlined,
                     label: 'Documents',
@@ -251,9 +255,9 @@ class AppShell extends StatelessWidget {
             ),
 
             // Footer Link
-            const Divider(height: 1, thickness: 1, color: AppColors.border),
+            const Divider(height: 1, thickness: 1, color: AppColors.onDarkBorder),
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AppSpacing.s12),
               child: _buildNavItem(
                 context: context,
                 icon: Icons.home_outlined,
@@ -280,30 +284,35 @@ class AppShell extends StatelessWidget {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
+    // Selected navigation is a Corporate Blue fill with white text.
     return Material(
-      color: isSelected ? AppColors.primary.withAlpha(20) : Colors.transparent,
-      borderRadius: BorderRadius.circular(8),
+      color: isSelected ? AppColors.primary : AppColors.transparent,
+      borderRadius: BorderRadius.circular(AppRadius.input),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        hoverColor: AppColors.surfaceSubtle,
+        borderRadius: BorderRadius.circular(AppRadius.input),
+        hoverColor: isSelected
+            ? AppColors.white.withAlpha(26)
+            : AppColors.white.withAlpha(16),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.s12,
+            vertical: AppSpacing.s12,
+          ),
           child: Row(
             children: [
               Icon(
                 isSelected ? activeIcon : icon,
                 size: 20,
-                color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                color: isSelected ? AppColors.white : AppColors.onDarkSubtle,
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.s12),
               Expanded(
                 child: Text(
                   label,
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: AppTextStyles.body.copyWith(
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                    color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                    color: AppColors.white,
                   ),
                 ),
               ),
@@ -319,35 +328,39 @@ class AppShell extends StatelessWidget {
     required String label,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.s12,
+        vertical: AppSpacing.s8,
+      ),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: AppColors.textMuted),
-          const SizedBox(width: 12),
+          Icon(icon, size: 20, color: AppColors.onDarkSubtle),
+          const SizedBox(width: AppSpacing.s12),
           Expanded(
             child: Text(
               label,
-              style: const TextStyle(
-                fontSize: 14,
+              style: AppTextStyles.body.copyWith(
                 fontWeight: FontWeight.w500,
-                color: AppColors.textMuted,
+                color: AppColors.onDarkSubtle,
               ),
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AppSpacing.s8),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-              color: AppColors.surfaceSubtle,
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: AppColors.border),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.s4,
+              vertical: AppSpacing.s4,
             ),
-            child: const Text(
+            decoration: BoxDecoration(
+              color: AppColors.white.withAlpha(16),
+              borderRadius: BorderRadius.circular(AppRadius.input),
+              border: Border.all(color: AppColors.white.withAlpha(24)),
+            ),
+            child: Text(
               'Soon',
-              style: TextStyle(
-                fontSize: 10,
+              style: AppTextStyles.micro.copyWith(
                 fontWeight: FontWeight.w700,
-                color: AppColors.textMuted,
+                color: AppColors.onDarkSubtle,
               ),
             ),
           ),

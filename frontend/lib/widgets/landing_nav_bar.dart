@@ -2,8 +2,17 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_spacing.dart';
+import '../theme/app_text_styles.dart';
 
+/// Landing page top navigation. Deep Blue navigation surface with white
+/// text ("Deep Blue: sidebar, top navigation, footer"); the frosted-glass
+/// blur on scroll is kept from the existing design.
 class LandingNavBar extends StatelessWidget {
+  /// Bar height, exposed so the landing screen can clear it below the
+  /// sticky header.
+  static const double height = 68;
+
   final bool isScrolled;
   final VoidCallback onScrollToFeatures;
   final VoidCallback onScrollToHowItWorks;
@@ -28,27 +37,19 @@ class LandingNavBar extends StatelessWidget {
         ),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          height: 68,
-          padding: EdgeInsets.symmetric(horizontal: isDesktop ? 40 : 16),
+          height: height,
+          padding: EdgeInsets.symmetric(horizontal: isDesktop ? AppSpacing.s32 : AppSpacing.s16),
           decoration: BoxDecoration(
             color: isScrolled
-                ? Colors.white.withAlpha(225)
-                : Colors.white.withAlpha(80),
+                ? AppColors.deepBlue.withAlpha(235)
+                : AppColors.deepBlue.withAlpha(204),
             border: Border(
               bottom: BorderSide(
-                color: isScrolled ? AppColors.border : Colors.transparent,
+                color: isScrolled ? AppColors.onDarkBorder : AppColors.transparent,
                 width: 1,
               ),
             ),
-            boxShadow: isScrolled
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withAlpha(12),
-                      blurRadius: 16,
-                      offset: const Offset(0, 4),
-                    ),
-                  ]
-                : [],
+            boxShadow: isScrolled ? AppShadows.card : const [],
           ),
           child: Row(
             children: [
@@ -57,25 +58,24 @@ class LandingNavBar extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(7),
+                    padding: const EdgeInsets.all(AppSpacing.s8),
                     decoration: BoxDecoration(
                       color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(AppRadius.input),
                     ),
                     child: const Icon(
                       Icons.directions_boat_filled,
-                      color: Colors.white,
+                      color: AppColors.white,
                       size: 20,
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  const Text(
+                  const SizedBox(width: AppSpacing.s8),
+                  Text(
                     'STARK VMS',
-                    style: TextStyle(
-                      fontSize: 17,
+                    style: AppTextStyles.h3.copyWith(
+                      color: AppColors.white,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.2,
-                      color: AppColors.textPrimary,
                     ),
                   ),
                 ],
@@ -87,36 +87,41 @@ class LandingNavBar extends StatelessWidget {
                 TextButton(
                   onPressed: onScrollToFeatures,
                   style: TextButton.styleFrom(
-                    foregroundColor: AppColors.textSecondary,
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    foregroundColor: AppColors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s12),
                   ),
-                  child: const Text('Features', style: TextStyle(fontWeight: FontWeight.w600)),
+                  child: Text(
+                    'Features',
+                    style: AppTextStyles.button.copyWith(fontWeight: FontWeight.w600),
+                  ),
                 ),
                 TextButton(
                   onPressed: onScrollToHowItWorks,
                   style: TextButton.styleFrom(
-                    foregroundColor: AppColors.textSecondary,
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    foregroundColor: AppColors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s12),
                   ),
-                  child: const Text('How It Works', style: TextStyle(fontWeight: FontWeight.w600)),
+                  child: Text(
+                    'How It Works',
+                    style: AppTextStyles.button.copyWith(fontWeight: FontWeight.w600),
+                  ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.s8),
               ],
 
-              // CTA Button
+              // CTA Button (white fill + primary text on the Deep Blue bar;
+              // the filled Corporate Blue primary stays reserved for the
+              // hero section's single primary action)
               ElevatedButton.icon(
                 onPressed: () => context.go('/dashboard'),
                 icon: const Icon(Icons.dashboard_rounded, size: 16),
                 label: const Text('Open Dashboard'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.white,
+                  foregroundColor: AppColors.primary,
                   padding: EdgeInsets.symmetric(
-                    horizontal: isDesktop ? 18 : 12,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    horizontal: isDesktop ? AppSpacing.s16 : AppSpacing.s12,
+                    vertical: AppSpacing.s12,
                   ),
                 ),
               ),

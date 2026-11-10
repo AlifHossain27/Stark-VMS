@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_spacing.dart';
+import '../theme/app_text_styles.dart';
 
 class HeroMockDashboard extends StatelessWidget {
   const HeroMockDashboard({super.key});
@@ -12,23 +14,12 @@ class HeroMockDashboard extends StatelessWidget {
 
     final card = Container(
       width: 440,
-      padding: const EdgeInsets.all(22),
+      padding: const EdgeInsets.all(AppSpacing.s24),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppRadius.card),
         border: Border.all(color: AppColors.border),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withAlpha(20),
-            blurRadius: 32,
-            offset: const Offset(0, 16),
-          ),
-          BoxShadow(
-            color: Colors.black.withAlpha(8),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: AppShadows.cardHover,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,37 +31,39 @@ class HeroMockDashboard extends StatelessWidget {
               Container(
                 width: 10,
                 height: 10,
-                decoration: const BoxDecoration(color: Colors.redAccent, shape: BoxShape.circle),
+                decoration: BoxDecoration(color: AppColors.border, shape: BoxShape.circle),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: AppSpacing.s4),
               Container(
                 width: 10,
                 height: 10,
-                decoration: const BoxDecoration(color: Colors.amberAccent, shape: BoxShape.circle),
+                decoration: BoxDecoration(color: AppColors.border, shape: BoxShape.circle),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: AppSpacing.s4),
               Container(
                 width: 10,
                 height: 10,
-                decoration: const BoxDecoration(color: Colors.greenAccent, shape: BoxShape.circle),
+                decoration: BoxDecoration(color: AppColors.border, shape: BoxShape.circle),
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceSubtle,
-                  borderRadius: BorderRadius.circular(12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.s8,
+                  vertical: AppSpacing.s4,
                 ),
-                child: const Row(
+                decoration: BoxDecoration(
+                  color: AppColors.neutralTint,
+                  borderRadius: BorderRadius.circular(AppRadius.input),
+                ),
+                child: Row(
                   children: [
-                    Icon(Icons.shield_outlined, size: 12, color: AppColors.primary),
-                    SizedBox(width: 4),
+                    const Icon(Icons.shield_outlined, size: 12, color: AppColors.primary),
+                    const SizedBox(width: AppSpacing.s4),
                     Text(
                       'Stark Fleet Live',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
+                      style: AppTextStyles.micro.copyWith(
                         color: AppColors.primary,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ],
@@ -78,7 +71,7 @@ class HeroMockDashboard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: AppSpacing.s16),
 
           // Mini Metric Cards
           Row(
@@ -88,45 +81,39 @@ class HeroMockDashboard extends StatelessWidget {
                   label: 'Fleet Size',
                   value: 'Live DB',
                   icon: Icons.directions_car,
-                  color: AppColors.primary,
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: AppSpacing.s8),
               Expanded(
                 child: _buildMiniStat(
                   label: 'System Sync',
                   value: 'Active',
                   icon: Icons.sync,
-                  color: AppColors.tealAccent,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.s16),
 
           // Mock Vehicle Rows
-          const Text(
+          Text(
             'ACTIVE ASSETS PREVIEW',
-            style: TextStyle(
-              fontSize: 10,
+            style: AppTextStyles.micro.copyWith(
               fontWeight: FontWeight.w800,
               letterSpacing: 0.8,
-              color: AppColors.textMuted,
             ),
           ),
-          const SizedBox(height: 8),
-          _buildMockRow(
+          const SizedBox(height: AppSpacing.s8),
+          const _MockVehicleRow(
             number: 'DHAKA-METRO-GA-11-2233',
             name: 'Toyota Hiace',
             type: 'VAN',
-            color: AppColors.tealAccent,
           ),
-          const SizedBox(height: 8),
-          _buildMockRow(
+          const SizedBox(height: AppSpacing.s8),
+          const _MockVehicleRow(
             number: 'DHAKA-METRO-BA-12-3456',
             name: 'Hino 1J Bus',
             type: 'BUS',
-            color: AppColors.primary,
           ),
         ],
       ),
@@ -145,40 +132,41 @@ class HeroMockDashboard extends StatelessWidget {
     required String label,
     required String value,
     required IconData icon,
-    required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.s12,
+        vertical: AppSpacing.s8,
+      ),
       decoration: BoxDecoration(
-        color: AppColors.surfaceSubtle,
-        borderRadius: BorderRadius.circular(10),
+        color: AppColors.neutralTint,
+        borderRadius: BorderRadius.circular(AppRadius.input),
         border: Border.all(color: AppColors.border),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(6),
+            padding: const EdgeInsets.all(AppSpacing.s4),
             decoration: BoxDecoration(
-              color: color.withAlpha(30),
-              borderRadius: BorderRadius.circular(6),
+              color: AppColors.primaryTint,
+              borderRadius: BorderRadius.circular(AppRadius.input),
             ),
-            child: Icon(icon, size: 14, color: color),
+            child: Icon(icon, size: 14, color: AppColors.primary),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AppSpacing.s8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 value,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
+                style: AppTextStyles.micro.copyWith(
                   color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
               Text(
                 label,
-                style: const TextStyle(fontSize: 10, color: AppColors.textMuted),
+                style: AppTextStyles.micro,
               ),
             ],
           ),
@@ -186,53 +174,71 @@ class HeroMockDashboard extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildMockRow({
-    required String number,
-    required String name,
-    required String type,
-    required Color color,
-  }) {
+/// Mock vehicle row for the hero illustration. The green dot denotes the
+/// ACTIVE status of the illustrated assets (green = ACTIVE only).
+class _MockVehicleRow extends StatelessWidget {
+  final String number;
+  final String name;
+  final String type;
+
+  const _MockVehicleRow({
+    required this.number,
+    required this.name,
+    required this.type,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.s8,
+        vertical: AppSpacing.s8,
+      ),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(AppRadius.input),
         border: Border.all(color: AppColors.border),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.s4,
+              vertical: AppSpacing.s4,
+            ),
             decoration: BoxDecoration(
-              color: color.withAlpha(25),
-              borderRadius: BorderRadius.circular(4),
+              color: AppColors.neutralTint,
+              borderRadius: BorderRadius.circular(AppRadius.input),
+              border: Border.all(color: AppColors.border),
             ),
             child: Text(
               type,
-              style: TextStyle(
-                fontSize: 9,
-                fontWeight: FontWeight.bold,
-                color: color,
+              style: AppTextStyles.micro.copyWith(
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AppSpacing.s8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   name,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
+                  style: AppTextStyles.micro.copyWith(
                     color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 Text(
                   number,
-                  style: const TextStyle(fontSize: 10, color: AppColors.textSecondary),
+                  style: AppTextStyles.micro.copyWith(
+                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ],
             ),
@@ -240,8 +246,8 @@ class HeroMockDashboard extends StatelessWidget {
           Container(
             width: 8,
             height: 8,
-            decoration: const BoxDecoration(
-              color: Colors.green,
+            decoration: BoxDecoration(
+              color: AppColors.success,
               shape: BoxShape.circle,
             ),
           ),
