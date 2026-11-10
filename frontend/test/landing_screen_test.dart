@@ -46,7 +46,8 @@ void main() {
       expect(find.text('Vehicle Registry'), findsOneWidget);
       expect(find.text('Documents & Expiry Tracking'), findsOneWidget);
       expect(find.text('Maintenance History'), findsWidgets);
-      expect(find.text('Driver Assignment'), findsOneWidget);
+      // Also listed in the footer, so more than one match is expected.
+      expect(find.text('Driver Assignment'), findsWidgets);
       expect(find.text('Search & Server Filters'), findsOneWidget);
       expect(find.text('Dashboard Insights'), findsOneWidget);
       expect(find.text('Coming soon'), findsNWidgets(5));

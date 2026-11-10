@@ -20,6 +20,23 @@ class AppTextStyles {
     height: 1.15,
   );
 
+  /// Landing hero headline on the dark gradient (desktop).
+  static const TextStyle heroDisplay = TextStyle(
+    fontSize: 56,
+    fontWeight: FontWeight.w900,
+    color: AppColors.white,
+    letterSpacing: -1.4,
+    height: 1.08,
+  );
+
+  /// Landing hero supporting copy on the dark gradient.
+  static const TextStyle heroLead = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w400,
+    color: AppColors.onDarkSubtle,
+    height: 1.65,
+  );
+
   /// Section headings, CTA banner title.
   static const TextStyle h1 = TextStyle(
     fontSize: 28,

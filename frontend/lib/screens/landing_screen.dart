@@ -74,10 +74,7 @@ class _LandingScreenState extends State<LandingScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Spacing that clears the sticky top bar.
-                const SizedBox(height: LandingNavBar.height + AppSpacing.s4),
-
-                // 1. Hero Section with subtle gradient
+                // 1. Hero Section (dark gradient; extends under the sticky bar)
                 _buildHeroSection(context, isDesktop, reduceMotion),
 
                 // 2. Stats Strip (3 text-only value claims)
@@ -123,118 +120,234 @@ class _LandingScreenState extends State<LandingScreen> {
   }
 
   Widget _buildHeroSection(BuildContext context, bool isDesktop, bool reduceMotion) {
-    final textContent = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Badge
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.s12,
-            vertical: AppSpacing.s4,
+    final headlineStyle =
+        (isDesktop ? AppTextStyles.heroDisplay : AppTextStyles.display).copyWith(
+      color: AppColors.white,
+    );
+
+    final textContent = ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 600),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeroBadge(),
+          const SizedBox(height: AppSpacing.s24),
+
+          // Headline
+          Text(
+            'Enterprise Fleet Control Built for Stark Group',
+            style: headlineStyle,
           ),
-          decoration: BoxDecoration(
-            color: AppColors.primaryTint,
-            borderRadius: BorderRadius.circular(AppRadius.input),
-            border: Border.all(color: AppColors.primaryTintBorder),
+          const SizedBox(height: AppSpacing.s24),
+
+          // Subtext
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: Text(
+              'A centralized, intelligent vehicle management platform ensuring fleet compliance, real-time asset tracking, and proactive maintenance.',
+              style: (isDesktop ? AppTextStyles.heroLead : AppTextStyles.body)
+                  .copyWith(color: AppColors.onDarkSubtle),
+            ),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
+          const SizedBox(height: AppSpacing.s32),
+
+          // Buttons: white-filled primary action plus an outlined secondary
+          // one, both high-contrast on the Deep Blue / Corporate Blue gradient.
+          Wrap(
+            spacing: AppSpacing.s16,
+            runSpacing: AppSpacing.s12,
             children: [
-              const Icon(Icons.shield_outlined, size: 14, color: AppColors.primary),
-              const SizedBox(width: AppSpacing.s4),
-              Text(
-                'Next-Gen Fleet Operations',
-                style: AppTextStyles.label.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w700,
+              ElevatedButton.icon(
+                onPressed: () => context.go('/dashboard'),
+                icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+                label: const Text('Go to Dashboard'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.white,
+                  foregroundColor: AppColors.primary,
+                  textStyle: AppTextStyles.button.copyWith(fontWeight: FontWeight.w800),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.s24,
+                    vertical: AppSpacing.s16,
+                  ),
+                ),
+              ),
+              OutlinedButton.icon(
+                onPressed: () => context.go('/vehicles'),
+                icon: const Icon(Icons.directions_car_outlined, size: 18),
+                label: const Text('View Vehicles'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.white,
+                  side: const BorderSide(color: AppColors.onDarkRaisedBorder, width: 1.2),
+                  textStyle: AppTextStyles.button.copyWith(fontWeight: FontWeight.w700),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.s24,
+                    vertical: AppSpacing.s16,
+                  ),
                 ),
               ),
             ],
           ),
-        ),
-        const SizedBox(height: AppSpacing.s16),
+          const SizedBox(height: AppSpacing.s32),
 
-        // Headline
-        const Text(
-          'Enterprise Fleet Control Built for Stark Group',
-          style: AppTextStyles.display,
-        ),
-        const SizedBox(height: AppSpacing.s16),
-
-        // Subtext
-        Text(
-          'A centralized, intelligent vehicle management platform ensuring fleet compliance, real-time asset tracking, and proactive maintenance.',
-          style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
-        ),
-        const SizedBox(height: AppSpacing.s32),
-
-        // Buttons: one filled primary action plus a secondary outlined one.
-        // Colors, text styles and padding come from the button theme.
-        Wrap(
-          spacing: AppSpacing.s16,
-          runSpacing: AppSpacing.s12,
-          children: [
-            ElevatedButton.icon(
-              onPressed: () => context.go('/dashboard'),
-              icon: const Icon(Icons.dashboard_rounded, size: 18),
-              label: const Text('Go to Dashboard'),
-            ),
-            OutlinedButton.icon(
-              onPressed: () => context.go('/vehicles'),
-              icon: const Icon(Icons.directions_car_outlined, size: 18),
-              label: const Text('View Vehicles'),
-            ),
-          ],
-        ),
-      ],
+          // Quiet proof points instead of fabricated metrics.
+          Wrap(
+            spacing: AppSpacing.s24,
+            runSpacing: AppSpacing.s12,
+            children: const [
+              _HeroProofPoint(label: 'Centralized registry'),
+              _HeroProofPoint(label: 'Expiry tracking'),
+              _HeroProofPoint(label: 'Maintenance history'),
+            ],
+          ),
+        ],
+      ),
     );
 
-    final heroWidgets = isDesktop
-        ? Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                flex: 6,
-                child: reduceMotion
-                    ? textContent
-                    : textContent
-                        .animate()
-                        .fadeIn(duration: 450.ms, curve: Curves.easeOut)
-                        .slideY(begin: 0.08, end: 0, duration: 450.ms),
-              ),
-              const SizedBox(width: AppSpacing.s48),
-              const Expanded(
-                flex: 5,
-                child: HeroMockDashboard(),
-              ),
-            ],
-          )
-        : Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              reduceMotion
-                  ? textContent
-                  : textContent
-                      .animate()
-                      .fadeIn(duration: 450.ms, curve: Curves.easeOut)
-                      .slideY(begin: 0.08, end: 0, duration: 450.ms),
-              const SizedBox(height: AppSpacing.s32),
-              const Center(child: HeroMockDashboard()),
-            ],
-          );
+    final animatedText = reduceMotion
+        ? textContent
+        : textContent
+            .animate()
+            .fadeIn(duration: 450.ms, curve: Curves.easeOut)
+            .slideY(begin: 0.06, end: 0, duration: 450.ms);
 
+    final showcase = isDesktop
+        ? _buildHeroShowcase()
+        : const Center(child: HeroMockDashboard());
+
+    return ClipRect(
+      child: Stack(
+        children: [
+          // Base Deep Blue -> Corporate Blue gradient.
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(gradient: AppColors.heroGradient),
+            ),
+          ),
+
+          // Faint engineering grid for depth.
+          Positioned.fill(
+            child: IgnorePointer(
+              child: CustomPaint(painter: const _HeroGridPainter()),
+            ),
+          ),
+
+          // Soft radial glows behind the product preview.
+          const Positioned(
+            top: -140,
+            right: -100,
+            child: IgnorePointer(
+              child: _HeroGlow(size: 520, color: AppColors.heroGlow),
+            ),
+          ),
+          Positioned(
+            bottom: -200,
+            left: -120,
+            child: IgnorePointer(
+              child: _HeroGlow(
+                size: 420,
+                color: AppColors.heroGlow.withAlpha(90),
+              ),
+            ),
+          ),
+
+          // Content, offset so the sticky top bar never covers the badge.
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              isDesktop ? AppSpacing.s48 : AppSpacing.s24,
+              LandingNavBar.height + (isDesktop ? AppSpacing.s48 : AppSpacing.s32),
+              isDesktop ? AppSpacing.s48 : AppSpacing.s24,
+              isDesktop ? AppSpacing.s48 : AppSpacing.s32,
+            ),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1200),
+                child: isDesktop
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(flex: 6, child: animatedText),
+                          const SizedBox(width: AppSpacing.s48),
+                          Expanded(flex: 5, child: showcase),
+                        ],
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          animatedText,
+                          const SizedBox(height: AppSpacing.s48),
+                          showcase,
+                        ],
+                      ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeroBadge() {
     return Container(
-      decoration: BoxDecoration(gradient: AppColors.heroGradient),
-      padding: EdgeInsets.symmetric(
-        horizontal: isDesktop ? AppSpacing.s48 : AppSpacing.s24,
-        vertical: isDesktop ? AppSpacing.s48 : AppSpacing.s32,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.s12,
+        vertical: AppSpacing.s8,
       ),
-      child: Center(
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 1200),
-          child: heroWidgets,
+      decoration: BoxDecoration(
+        color: AppColors.onDarkRaised,
+        borderRadius: BorderRadius.circular(AppRadius.card),
+        border: Border.all(color: AppColors.onDarkRaisedBorder),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.shield_outlined,
+            size: 14,
+            color: AppColors.onDarkSubtle,
+          ),
+          const SizedBox(width: AppSpacing.s8),
+          Text(
+            'Next-Gen Fleet Operations',
+            style: AppTextStyles.label.copyWith(
+              color: AppColors.white,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.6,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Desktop-only product preview with two floating capability chips.
+  Widget _buildHeroShowcase() {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppSpacing.s16,
+            vertical: AppSpacing.s24,
+          ),
+          child: HeroMockDashboard(),
         ),
-      ),
+        const Positioned(
+          top: 0,
+          right: 0,
+          child: _HeroFloatingChip(
+            icon: Icons.notification_important_outlined,
+            label: 'Expiry alerts',
+          ),
+        ),
+        const Positioned(
+          bottom: AppSpacing.s8,
+          left: 0,
+          child: _HeroFloatingChip(
+            icon: Icons.car_repair_outlined,
+            label: 'Service history',
+          ),
+        ),
+      ],
     );
   }
 
@@ -466,4 +579,124 @@ class _LandingScreenState extends State<LandingScreen> {
       ),
     );
   }
+}
+
+/// Small check + label pair used under the hero call to action.
+class _HeroProofPoint extends StatelessWidget {
+  final String label;
+
+  const _HeroProofPoint({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Icon(
+          Icons.check_circle_outline_rounded,
+          size: 16,
+          color: AppColors.onDarkSubtle,
+        ),
+        const SizedBox(width: AppSpacing.s8),
+        Text(
+          label,
+          style: AppTextStyles.label.copyWith(
+            color: AppColors.onDarkSubtle,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.2,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// White capability chip that floats over the hero product preview.
+class _HeroFloatingChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const _HeroFloatingChip({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.s12,
+        vertical: AppSpacing.s8,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppRadius.input),
+        border: Border.all(color: AppColors.border),
+        boxShadow: AppShadows.cardHover,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.s4),
+            decoration: BoxDecoration(
+              color: AppColors.primaryTint,
+              borderRadius: BorderRadius.circular(AppRadius.input),
+            ),
+            child: Icon(icon, size: 14, color: AppColors.primary),
+          ),
+          const SizedBox(width: AppSpacing.s8),
+          Text(
+            label,
+            style: AppTextStyles.label.copyWith(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.2,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Soft circular glow used as a background accent in the hero.
+class _HeroGlow extends StatelessWidget {
+  final double size;
+  final Color color;
+
+  const _HeroGlow({required this.size, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(
+          colors: [color, color.withAlpha(0)],
+        ),
+      ),
+    );
+  }
+}
+
+/// Faint 48px grid that adds depth to the dark hero without new colors.
+class _HeroGridPainter extends CustomPainter {
+  const _HeroGridPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = AppColors.onDarkGrid
+      ..strokeWidth = 1;
+
+    for (double x = 0; x <= size.width; x += AppSpacing.s48) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+    for (double y = 0; y <= size.height; y += AppSpacing.s48) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _HeroGridPainter oldDelegate) => false;
 }

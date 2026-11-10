@@ -88,17 +88,36 @@ class AppColors {
   /// Dividers / subtle borders on Deep Blue surfaces: 20% white.
   static const Color onDarkBorder = Color(0xFF3C516A);
 
+  /// ~12% white: raised surfaces (badges, live pills) on the dark hero.
+  static const Color onDarkRaised = Color(0x1FFFFFFF);
+
+  /// ~24% white: borders of raised surfaces on the dark hero.
+  static const Color onDarkRaisedBorder = Color(0x3DFFFFFF);
+
+  /// ~8% white: decorative grid lines on the dark hero.
+  static const Color onDarkGrid = Color(0x14FFFFFF);
+
+  /// Corporate Blue at ~42% alpha: decorative radial glow, no new hue.
+  static const Color heroGlow = Color(0x6B1D5FD1);
+
   // ------------------------------------------------------------------
   // Gradients.
   // "Gradients: only subtle blends of Deep Blue and Corporate Blue
   // (landing hero, CTA banner)."
   // ------------------------------------------------------------------
 
-  /// Subtle blend of Corporate Blue into Deep Blue for the landing hero.
-  static LinearGradient get heroGradient => LinearGradient(
-        colors: [primary.withAlpha(20), deepBlue.withAlpha(14)],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
+  /// Subtle blend of Deep Blue into Corporate Blue for the landing hero.
+  ///
+  /// Corporate Blue blended ~35% over Deep Blue, pre-computed so the
+  /// gradient can be a const token. The hero uses White text on it, per the
+  /// "text on Deep Blue / Corporate Blue is White" rule.
+  static const Color heroMid = Color(0xFF113976);
+
+  /// Deep Blue into the heroMid blend for the landing hero.
+  static const LinearGradient heroGradient = LinearGradient(
+        colors: [deepBlue, heroMid],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
       );
 
   /// Deep Blue into Corporate Blue blend for the landing CTA banner.
